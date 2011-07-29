@@ -1,0 +1,85 @@
+<?php
+/***
+ * Plugin Name: Navis DocumentCloud
+ * Description: Embed DocumentCloud documents that won't be eaten by the visual editor
+ * Version: 0.1
+ * Author: Chris Amico
+ * License: GPLv2
+***/
+/*
+    Copyright 2011 National Public Radio, Inc. 
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License, version 2, as 
+    published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+class Navis_DocumentCloud {
+    
+    function __construct() {
+        // shortcode
+        add_shortcode( 'documentcloud', array(&$this, 'embed_shortcode'));
+    }
+    
+    function get_defaults() {
+        // add admin options to adjust these defaults
+        return array(
+            'url' => null,
+            'id' => null,
+            'height' => 600,
+            'width' => 620,
+            'sidebar' => false,
+            'text' => true,
+            'pdf' => true
+        );
+    }
+    
+    function parse_id_from_url($url) {
+        $regex = '{^https://www\.documentcloud\.org/documents/(?P<id>.+)\.html}';
+        $matches = array();
+        if (preg_match($regex, $url, $matches)) {
+            return $matches['id'];
+        } else {
+            return null;
+        }
+    }
+    
+    function embed_shortcode($atts, $content, $code) {
+        extract( shortcode_atts($this->get_defaults(), $atts));
+        
+        // we need a document ID or URL, or it's a no op
+        if ($url && !$id) {
+            // parse id from url
+            $id = $this->parse_id_from_url($url);
+        }
+        
+        // still no id? nothing doing
+        if (!$id) return;
+        
+        ?>
+        <div id="DV-viewer-<?php echo $id; ?>" class="DV-container"></div>
+        <script src="http://s3.documentcloud.org/viewer/loader.js"></script>
+        <script>
+          DV.load('http://www.documentcloud.org/documents/<?php echo $id; ?>.js', {
+            width: <?php echo $width; ?>,
+            height: <?php echo $height; ?>,
+            sidebar: <?php echo $sidebar ? "true" : "false"; ?>,
+            text: <?php echo $text ? "true" : "false"; ?>,
+            pdf: <?php echo $pdf ? "true" : "false"; ?>,
+            container: '#DV-viewer-<?php echo $id; ?>'
+          });
+        </script>
+        <?php
+    }
+}
+
+new Navis_DocumentCloud;
