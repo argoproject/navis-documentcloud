@@ -32,14 +32,15 @@ class Navis_DocumentCloud {
     
     function get_defaults() {
         // add admin options to adjust these defaults
+        // storing js params as strings instead of real booleans
         return array(
             'url' => null,
             'id' => null,
             'height' => 600,
             'width' => 620,
-            'sidebar' => false,
-            'text' => true,
-            'pdf' => true
+            'sidebar' => 'false',
+            'text' => 'true',
+            'pdf' => 'true'
         );
     }
     
@@ -65,20 +66,21 @@ class Navis_DocumentCloud {
         // still no id? nothing doing
         if (!$id) return;
         
-        ?>
-        <div id="DV-viewer-<?php echo $id; ?>" class="DV-container"></div>
-        <script src="http://s3.documentcloud.org/viewer/loader.js"></script>
+        return "
+        <div id='DV-viewer-$id' class='DV-container'></div>
+        
+        <script src='http://s3.documentcloud.org/viewer/loader.js'></script>
         <script>
-          DV.load('http://www.documentcloud.org/documents/<?php echo $id; ?>.js', {
-            width: <?php echo $width; ?>,
-            height: <?php echo $height; ?>,
-            sidebar: <?php echo $sidebar ? "true" : "false"; ?>,
-            text: <?php echo $text ? "true" : "false"; ?>,
-            pdf: <?php echo $pdf ? "true" : "false"; ?>,
-            container: '#DV-viewer-<?php echo $id; ?>'
+          DV.load('http://www.documentcloud.org/documents/$id.js', {
+            width: $width,
+            height: $height,
+            sidebar: $sidebar,
+            text: $text,
+            pdf: $pdf,
+            container: '#DV-viewer-$id'
           });
         </script>
-        <?php
+        ";
     }
 }
 
