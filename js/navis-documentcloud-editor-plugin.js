@@ -24,9 +24,9 @@
 
             // Register example button
             ed.addButton('documentcloud', {
-                title : 'Module Wrapper',
+                title : 'Document Cloud',
                 cmd : 'documentcloud',
-                image : url + '/module.png'
+                image : url + '/button.png'
             });
 
             // Add a node change handler, selects the button in the UI when a image is selected
