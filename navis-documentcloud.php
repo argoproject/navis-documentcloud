@@ -27,7 +27,33 @@ class Navis_DocumentCloud {
     
     function __construct() {
         // shortcode
+        // mce plugins
+        // mce buttons
         add_shortcode( 'documentcloud', array(&$this, 'embed_shortcode'));
+        
+        add_action( 'init', array(&$this, 'register_tinymce_filters'));
+    
+    }
+    
+    function register_tinymce_filters() {
+        add_filter('mce_external_plugins', 
+            array(&$this, 'add_tinymce_plugin')
+        );
+        add_filter('mce_buttons', 
+            array(&$this, 'register_button')
+        );
+        
+    }
+        
+    function add_tinymce_plugin($plugin_array) {
+        $plugin_array['documentcloud'] = plugins_url(
+            'js/navis-documentcloud-editor-plugin.js', __FILE__);
+        return $plugin_array;
+    }
+    
+    function register_button($buttons) {
+        array_push($buttons, '|', "documentcloud");
+        return $buttons;
     }
     
     function get_defaults() {
@@ -63,7 +89,7 @@ class Navis_DocumentCloud {
             $id = $this->parse_id_from_url($url);
         }
         
-        // still no id? nothing doing
+        // still no id? nothin doing
         if (!$id) return;
         
         return "
