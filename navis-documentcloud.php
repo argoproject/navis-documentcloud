@@ -62,12 +62,24 @@ class Navis_DocumentCloud {
         return array(
             'url' => null,
             'id' => null,
-            'height' => 600,
-            'width' => 620,
+            'height' => get_option('documentcloud_default_height', 600),
+            'width' => get_option('documentcloud_default_width', 620),
             'sidebar' => 'false',
             'text' => 'true',
             'pdf' => 'true'
         );
+    }
+    
+    function save($post_id) {
+        # tell the post if we're carrying a wide load
+        $wide_assets = get_post_meta($post_id, 'wide_assets', true);
+        if ($width > $defaults['width']) {
+            $wide_assets[$id] = true;
+        } else {
+            $wide_assets[$id] = false;
+        }
+        update_post_meta($post_id, 'wide_assets', $wide_assets);
+        
     }
     
     function parse_id_from_url($url) {
@@ -80,8 +92,9 @@ class Navis_DocumentCloud {
         }
     }
     
-    function embed_shortcode($atts, $content, $code) {
-        extract( shortcode_atts($this->get_defaults(), $atts));
+    function embed_shortcode($atts, $content, $code) {        
+        $defaults = $this->get_defaults();
+        extract( shortcode_atts($defaults, $atts));
         
         // we need a document ID or URL, or it's a no op
         if ($url && !$id) {
@@ -92,6 +105,10 @@ class Navis_DocumentCloud {
         // still no id? nothin doing
         if (!$id) return;
         
+        # we only deal with integers
+        $height = intval($height);
+        $width = intval($width);
+                
         return "
         <div id='DV-viewer-$id' class='DV-container'></div>
         

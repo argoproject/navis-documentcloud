@@ -1,5 +1,9 @@
 <?php
-$SITEURL = ( $_SERVER[ 'HTTPS' ] ) ? 'https://' : 'http://';
+if (isset($_SERVER['HTTPS'])) {
+    $SITEURL = ( $_SERVER[ 'HTTPS' ] ) ? 'https://' : 'http://';
+} else {
+    $SITEURL = 'http://';
+}
 $SITEURL .= $_SERVER[ 'HTTP_HOST' ] or $_SERVER[ 'SERVER_NAME' ];
 $SITEURL .= $_GET[ 'wpbase' ];
 ?>
@@ -15,28 +19,51 @@ $SITEURL .= $_GET[ 'wpbase' ];
     form p {
         font-size: 1.5em;
     }
-    form input {
-        line-height: 1.5em;
-        font-size: 1.5em;
-    }
     </style>
 </head>
 <body onload="tinyMCEPopup.executeOnLoad('init();)'); document.body.style.display='';">
-    <p><?php echo $SITEURL; ?></p>
-    <form>
+    <form id="doc_opts">
         <p>                
-            <label for="documentcloud">Document URL</label>
-            <input type="text" name="documentcloud" value="" id="documentcloud" />
+            <label for="url">Document URL</label>
+            <input type="text" name="url" value="" id="url" />
+        </p>
+        <p>
+            <label for="format">Format</label>
+            <select name="format" id="format">
+                <option value="normal">Normal width</option>
+                <option value="wide">Full width</option>
+            </select>
         </p>
         <div class="mceActionPanel">
             <div style="float: left">
                 <input type="button" id="cancel" name="cancel" value="Cancel" onclick="tinyMCEPopup.close();" />
             </div>
             <div style="float: right">
-                <input type="submit" id="insert" name="insert" value="Insert" onclick="insertDocumentCode();" />
+                <input type="submit" id="insert" name="insert" value="Insert" />
             </div>
         </div>
     </form>
+    <script>
+    $(function() {
+        $('#insert').click(function(e) {
+            var url = $('<input/>')
+                .attr('type', 'hidden')
+                .attr('name', 'documents[' + url + '][url]')
+                .val($('#url').val());
+                
+            var format = $('<input/>')
+                .attr('type', 'hidden')
+                .attr('name', 'documents[' + url + '][format]')
+                .val($('#format').val());
+                        
+            var parentForm = $('form#post', parent.document);
+            parentForm.append(url);
+            parentForm.append(format);
+            insertDocumentCode();
+        });
+    });
+    </script>
+    
 </body>
 </html>
 
