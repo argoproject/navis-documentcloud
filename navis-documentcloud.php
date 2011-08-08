@@ -104,6 +104,9 @@ class Navis_DocumentCloud {
                 
                     $documents[$atts['id']] = $atts;
                     
+                    error_log( print_r($documents, true) );
+                    error_log( print_r($wide_assets, true) );
+                    
                 }
             }
         }
@@ -138,6 +141,9 @@ class Navis_DocumentCloud {
         # we only deal with integers
         $height = intval($height);
         $width = intval($width);
+        if ($format == "wide") {
+            $width = get_option('documentcloud_full_width', 940);
+        }
                 
         return "
         <div id='DV-viewer-$id' class='DV-container'></div>
