@@ -103,10 +103,7 @@ class Navis_DocumentCloud {
                     }
                 
                     $documents[$atts['id']] = $atts;
-                    
-                    error_log( print_r($documents, true) );
-                    error_log( print_r($wide_assets, true) );
-                    
+                                        
                 }
             }
         }
@@ -126,6 +123,7 @@ class Navis_DocumentCloud {
     }
     
     function embed_shortcode($atts, $content, $code) {        
+        global $post;
         $defaults = $this->get_defaults();
         extract( shortcode_atts($defaults, $atts));
         
@@ -144,22 +142,42 @@ class Navis_DocumentCloud {
         if ($format == "wide") {
             $width = get_option('documentcloud_full_width', 940);
         }
-                
-        return "
-        <div id='DV-viewer-$id' class='DV-container'></div>
         
-        <script src='http://s3.documentcloud.org/viewer/loader.js'></script>
-        <script>
-          DV.load('http://www.documentcloud.org/documents/$id.js', {
-            width: $width,
-            height: $height,
-            sidebar: $sidebar,
-            text: $text,
-            pdf: $pdf,
-            container: '#DV-viewer-$id'
-          });
-        </script>
-        ";
+        $is_wide = $width > $defaults['width'];
+        
+        // full control in single templates
+        if (is_single()) {
+            return "
+            <div id='DV-viewer-$id' class='DV-container'></div>
+            <script src='http://s3.documentcloud.org/viewer/loader.js'></script>
+            <script>
+              DV.load('http://www.documentcloud.org/documents/$id.js', {
+                width: $width,
+                height: $height,
+                sidebar: $sidebar,
+                text: $text,
+                pdf: $pdf,
+                container: '#DV-viewer-$id'
+              });
+            </script>
+            ";
+        } else {
+            // index view is always normal width, no sidebar
+            return "
+            <div id='DV-viewer-$id' class='DV-container'></div>
+            <script src='http://s3.documentcloud.org/viewer/loader.js'></script>
+            <script>
+              DV.load('http://www.documentcloud.org/documents/$id.js', {
+                width: {$defaults['width']},
+                height: $height,
+                sidebar: {$defaults['sidebar']},
+                text: $text,
+                pdf: $pdf,
+                container: '#DV-viewer-$id'
+              });
+            </script>            
+            ";
+        }
     }
 }
 
