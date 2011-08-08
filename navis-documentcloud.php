@@ -32,6 +32,8 @@ class Navis_DocumentCloud {
         add_shortcode( 'documentcloud', array(&$this, 'embed_shortcode'));
         
         add_action( 'init', array(&$this, 'register_tinymce_filters'));
+        
+        add_action( 'save_post', array(&$this, 'save'));
     
     }
     
@@ -64,6 +66,7 @@ class Navis_DocumentCloud {
             'id' => null,
             'height' => get_option('documentcloud_default_height', 600),
             'width' => get_option('documentcloud_default_width', 620),
+            'format' => 'normal',
             'sidebar' => 'false',
             'text' => 'true',
             'pdf' => 'true'
@@ -72,12 +75,39 @@ class Navis_DocumentCloud {
     
     function save($post_id) {
         # tell the post if we're carrying a wide load
+        $post = get_post($post_id);
+        $defaults = $this->get_defaults();
         $wide_assets = get_post_meta($post_id, 'wide_assets', true);
-        if ($width > $defaults['width']) {
-            $wide_assets[$id] = true;
-        } else {
-            $wide_assets[$id] = false;
+        $documents = get_post_meta($post_id, 'documentcloud', true);
+        $matches = array();
+        
+        preg_match_all('/'.get_shortcode_regex().'/', $post->post_content, $matches);
+        $tags = $matches[2];
+        $args = $matches[3];
+        foreach($tags as $i => $tag) {
+            if ($tag == "documentcloud") {
+                $atts = shortcode_parse_atts($args[$i]);
+                $atts = shortcode_atts($defaults, $atts);
+
+                // get a doc id to keep array keys consistent
+                if ( isset($atts['url']) && !isset($atts['id']) ) {
+                    $atts['id'] = $this->parse_id_from_url($atts['url']);
+                }
+                
+                // if no id, don't bother storing because it's wrong
+                if ($atts['id'] != null) {
+                    if ( $atts['format'] == "wide" || $atts['width'] > $defaults['width']) {
+                        $wide_assets[$atts['id']] = true;
+                    } else {
+                        $wide_assets[$atts['id']] = false;
+                    }
+                
+                    $documents[$atts['id']] = $atts;
+                    
+                }
+            }
         }
+        update_post_meta($post_id, 'documents', $documents);
         update_post_meta($post_id, 'wide_assets', $wide_assets);
         
     }
