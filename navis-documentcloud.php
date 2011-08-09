@@ -34,7 +34,10 @@ class Navis_DocumentCloud {
         add_action( 'init', array(&$this, 'register_tinymce_filters'));
         
         add_action( 'save_post', array(&$this, 'save'));
-    
+        
+        add_action( 'admin_menu', array(&$this, 'add_options_page'));
+        
+        add_action( 'admin_init', array(&$this, 'settings_init'));
     }
     
     function register_tinymce_filters() {
@@ -72,6 +75,58 @@ class Navis_DocumentCloud {
             'pdf' => 'true'
         );
     }
+    
+    function add_options_page() {
+        add_options_page('DocumentCloud', 'DocumentCloud', 'manage_options', 
+                        'documentcloud', array(&$this, 'render_options_page'));
+    }
+    
+    function render_options_page() { ?>
+        <h2>DocumentCloud Options</h2>
+        <form action="options.php" method="post">
+            
+            <?php settings_fields('documentcloud'); ?>
+            <?php do_settings_sections('documentcloud'); ?>
+            
+            <input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" />
+            </form>
+        <?php
+    }
+    
+    function settings_init() {
+        add_settings_section( 'documentcloud', '',
+            array(&$this, 'settings_section'), 'documentcloud');
+        
+        add_settings_field('documentcloud_default_height', 'Default embed height (px)',
+            array(&$this, 'default_height_field'), 'documentcloud', 'documentcloud');
+        register_setting('documentcloud', 'documentcloud_default_height');
+        
+        add_settings_field('documentcloud_default_width', 'Default embed width (px)',
+            array(&$this, 'default_width_field'), 'documentcloud', 'documentcloud');
+        register_setting('documentcloud', 'documentcloud_default_width');
+        
+        add_settings_field('documentcloud_full_width', 'Full-width embed width (px)',
+            array(&$this, 'full_width_field'), 'documentcloud', 'documentcloud');
+        register_setting('documentcloud', 'documentcloud_full_width');
+        
+    }
+    
+    function default_height_field() {
+        $option = intval(get_option( 'documentcloud_default_height', 600 ));
+        echo "<input type='text' value='$option' name='documentcloud_default_height' />";
+    }
+    
+    function default_width_field() {
+        $option = intval(get_option( 'documentcloud_default_width', 620 ));
+        echo "<input type='text' value='$option' name='documentcloud_default_width' />";
+    }
+    
+    function full_width_field() {
+        $option = intval(get_option( 'documentcloud_full_width', 620 ));
+        echo "<input type='text' value='$option' name='documentcloud_full_width' />";
+    }
+    
+    function settings_section() {}
     
     function save($post_id) {
         # tell the post if we're carrying a wide load
