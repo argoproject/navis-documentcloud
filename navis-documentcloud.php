@@ -129,13 +129,21 @@ class Navis_DocumentCloud {
     function settings_section() {}
     
     function save($post_id) {
-        # tell the post if we're carrying a wide load
+        // tell the post if we're carrying a wide load        
+        
         $post = get_post($post_id);
+        
+        // avoid autosave
+        if ( !in_array( $post->post_status, array(
+            'publish', 'draft', 'private', 'future', 'pending'
+            )) 
+        ) { return; }
+        
         $defaults = $this->get_defaults();
         $wide_assets = get_post_meta($post_id, 'wide_assets', true);
         $documents = get_post_meta($post_id, 'documentcloud', true);
         $matches = array();
-        
+                
         preg_match_all('/'.get_shortcode_regex().'/', $post->post_content, $matches);
         $tags = $matches[2];
         $args = $matches[3];
@@ -158,13 +166,13 @@ class Navis_DocumentCloud {
                     }
                 
                     $documents[$atts['id']] = $atts;
-                                        
+                    
                 }
             }
         }
         update_post_meta($post_id, 'documents', $documents);
         update_post_meta($post_id, 'wide_assets', $wide_assets);
-        
+                
     }
     
     function parse_id_from_url($url) {
