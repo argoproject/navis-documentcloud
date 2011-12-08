@@ -1,5 +1,5 @@
 === Navis DocumentCloud ===
-Contributors: eyeseast
+Contributors: chrisamico
 Tags: documentcloud, documents
 Tested up to: 3.2.1
 Stable tag: trunk
@@ -8,7 +8,7 @@ Embed DocumentCloud documents that won't be eaten by the visual editor.
 
 == Description ==
 
-[DocumentCloud](http://www.documentcloud.org/home) is a free service allowing journalists to analyze, annotate and publish documents, funded by the Knight Foundation.
+[DocumentCloud](http://www.documentcloud.org/home) is a free service allowing journalists to analyze, annotate and publish documents, funded by the Knight Foundation. Initial development supported by [NPR](http://www.npr.org) as part of [StateImpact](http://stateimpact.npr.org) project.
 
 DocumentCloud's normal embed code looks like this:
 
