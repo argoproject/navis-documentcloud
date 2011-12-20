@@ -10,7 +10,7 @@ function insertDocumentCode() {
     var shortcode = "[documentcloud "
                     + shortcode_format('url', $('input#url').val())
                     + shortcode_format('format', $('select#format').val())
-                    + shortcode_format('sidebar', $('input#sidebar').val())
+                    + shortcode_format('sidebar', $('input#sidebar:checked').val() || false)
                     + "]";
 
     window.tinyMCE.execInstanceCommand('content', 'mceInsertContent', false, shortcode);
