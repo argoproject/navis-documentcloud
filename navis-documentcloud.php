@@ -88,7 +88,7 @@ class Navis_DocumentCloud {
             <?php settings_fields('documentcloud'); ?>
             <?php do_settings_sections('documentcloud'); ?>
             
-            <input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" />
+            <input class="button-primary" name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" />
             </form>
         <?php
     }
