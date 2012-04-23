@@ -1,7 +1,8 @@
 === Navis DocumentCloud ===
 Contributors: chrisamico
 Tags: documentcloud, documents
-Tested up to: 3.2.1
+Requires at least: 3.2
+Tested up to: 3.3.2
 Stable tag: trunk
 
 Embed DocumentCloud documents that won't be eaten by the visual editor.
