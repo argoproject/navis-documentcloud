@@ -11,7 +11,7 @@ $SITEURL .= $_GET[ 'wpbase' ];
 <html lang="en">
 <head>
     <title>Insert a Document</title>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
     <script src="<?php echo $SITEURL; ?>wp-includes/js/tinymce/tiny_mce_popup.js"></script>
     <script src="<?php echo $SITEURL; ?>wp-includes/js/tinymce/utils/form_utils.js"></script>
     <script src="<?php echo $SITEURL; ?>wp-content/plugins/navis-documentcloud/js/tinywindow.js?version=1"></script>
