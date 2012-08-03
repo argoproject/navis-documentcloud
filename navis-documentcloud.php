@@ -209,7 +209,7 @@ class Navis_DocumentCloud {
         $is_wide = $width > $defaults['width'];
         
         // full control in single templates
-        if (is_single()) {
+        if (is_single() || is_page()) {
             return "
             <div id='DV-viewer-$id' class='DV-container'></div>
             <script src='http://s3.documentcloud.org/viewer/loader.js'></script>
