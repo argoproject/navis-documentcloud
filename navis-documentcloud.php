@@ -2,7 +2,7 @@
 /***
  * Plugin Name: Navis DocumentCloud
  * Description: Embed DocumentCloud documents that won't be eaten by the visual editor
- * Version: 0.1
+ * Version: 0.2
  * Author: Chris Amico
  * License: GPLv2
 ***/
@@ -242,6 +242,53 @@ class Navis_DocumentCloud {
             ";
         }
     }
-}
+    
+    /**
+     * 
+     * This is to be run as a filter, we will replace the documentcloud shortcodes with an <a> tag that links
+     * to the document instead of the cool documentCloud shortcode.  This allows us to send the post to an external
+     * entity (the NPR story API?) for better usability/storage.
+     * 
+     * @param string $text
+     * @return string
+     */
+    public static function my_documentCloud_filter($text) {
+			/**
+			 * I have something like :
+			 *    lorem ipsum blah blah blah [documentcloud url=https://www.documentcloud.org/documents/547959-stateimpact-how-to-cover-policy-and-still-be.html format=normal sidebar=false ] more text
+			 * 
+			 * and I want to replace the shortcode in there with <a href=mycoolurl>mycoolurl</a> but leave the rest alone
+			 * 
+			 */
+    	$url_default = array(
+            'url' => null);
+    	
+    	//get all the shortcodes possible, then walk through and find the URLs in any documentcloud shortcodes
+    	preg_match_all('/'.get_shortcode_regex().'/', $text, $matches);
+			$tags = $matches[2];
+      $args = $matches[3];
+      $urls = array();
+      foreach($tags as $i => $tag) {
+      	if ($tag == "documentcloud") {
+      		$atts = shortcode_parse_atts($args[$i]);
+          $atts = shortcode_atts($url_default, $atts);
+          extract($atts);
+          if (!empty($url)){
+          	$a_tag = '<div class=documentcloud><a href="'.$url.'">'.$url.'</a></div>';
+		      	$url_pattern = preg_replace('/\//', '\\/', $url);
+		      	//the regex looks like '[documentcloud url=' and 
+		      	//                        then the URL we're looking at 
+		      	//                        then whitespace, 
+		      	//                        then a bunch of anything ending in a ']'
+			      $regexp = "\[documentcloud\surl=".$url_pattern."\\s*[A-Z0-9._%+-=\s]*\]";
+						$text = preg_replace( '/'.$regexp.'/siU',  $a_tag , $text);
+          }
+      	}
+      }
 
+			return $text;
+		}
+		
+}
+add_filter( 'npr_ds_shortcode_filter', 'Navis_DocumentCloud::my_documentCloud_filter', 10, 1 );
 new Navis_DocumentCloud;
