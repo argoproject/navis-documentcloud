@@ -210,7 +210,7 @@ class Navis_DocumentCloud {
         // full control in single templates
         if (is_single() || is_page()) {
             return "
-            <div id='DV-viewer-$id' class='DV-container'></div>
+            <div id=DV-viewer-$id' class='DV-container'></div>
             <script src='http://s3.documentcloud.org/viewer/loader.js'></script>
             <script>
               DV.load('http://www.documentcloud.org/documents/$id.js', {
@@ -221,8 +221,8 @@ class Navis_DocumentCloud {
                 pdf: $pdf,
                 container: '#DV-viewer-$id'
               });
-            </script>
-            ";
+            </script>";
+
         } else {
             // index view is always normal width, no sidebar
             return "
@@ -237,8 +237,7 @@ class Navis_DocumentCloud {
                 pdf: $pdf,
                 container: '#DV-viewer-$id'
               });
-            </script>            
-            ";
+            </script>";
         }
     }
 }
