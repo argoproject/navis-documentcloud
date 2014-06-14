@@ -26,24 +26,23 @@
 class Navis_DocumentCloud {
     
     function __construct() {
-        // shortcode
-        // mce plugins
-        // mce buttons
-        add_shortcode( 'documentcloud', array(&$this, 'embed_shortcode'));
+
+        add_shortcode('documentcloud', array(&$this, 'embed_shortcode'));
         
-        add_action( 'init', array(&$this, 'register_tinymce_filters'));
+        add_action('init', array(&$this, 'register_tinymce_filters'));
         
-        add_action( 'save_post', array(&$this, 'save'));
+        add_action('save_post', array(&$this, 'save'));
         
-        add_action( 'admin_menu', array(&$this, 'add_options_page'));
+        add_action('admin_menu', array(&$this, 'add_options_page'));
         
-        add_action( 'admin_init', array(&$this, 'settings_init'));
+        add_action('admin_init', array(&$this, 'settings_init'));
     }
     
     function register_tinymce_filters() {
         add_filter('mce_external_plugins', 
             array(&$this, 'add_tinymce_plugin')
         );
+
         add_filter('mce_buttons', 
             array(&$this, 'register_button')
         );
@@ -57,7 +56,7 @@ class Navis_DocumentCloud {
     }
     
     function register_button($buttons) {
-        array_push($buttons, '|', "documentcloud");
+        array_push($buttons, '|', 'documentcloud');
         return $buttons;
     }
     
@@ -94,7 +93,7 @@ class Navis_DocumentCloud {
     }
     
     function settings_init() {
-        add_settings_section( 'documentcloud', '',
+        add_settings_section('documentcloud', '',
             array(&$this, 'settings_section'), 'documentcloud');
         
         add_settings_field('documentcloud_default_height', 'Default embed height (px)',
@@ -112,17 +111,17 @@ class Navis_DocumentCloud {
     }
     
     function default_height_field() {
-        $option = intval(get_option( 'documentcloud_default_height', 600 ));
+        $option = intval(get_option('documentcloud_default_height', 600));
         echo "<input type='text' value='$option' name='documentcloud_default_height' />";
     }
     
     function default_width_field() {
-        $option = intval(get_option( 'documentcloud_default_width', 620 ));
+        $option = intval(get_option('documentcloud_default_width', 620));
         echo "<input type='text' value='$option' name='documentcloud_default_width' />";
     }
     
     function full_width_field() {
-        $option = intval(get_option( 'documentcloud_full_width', 620 ));
+        $option = intval(get_option('documentcloud_full_width', 620));
         echo "<input type='text' value='$option' name='documentcloud_full_width' />";
     }
     
@@ -134,7 +133,7 @@ class Navis_DocumentCloud {
         $post = get_post($post_id);
         
         // avoid autosave
-        if ( !in_array( $post->post_status, array(
+        if (!in_array($post->post_status, array(
             'publish', 'draft', 'private', 'future', 'pending'
             )) 
         ) { return; }
@@ -153,13 +152,13 @@ class Navis_DocumentCloud {
                 $atts = shortcode_atts($defaults, $atts);
 
                 // get a doc id to keep array keys consistent
-                if ( isset($atts['url']) && !isset($atts['id']) ) {
+                if (isset($atts['url']) && !isset($atts['id']) ) {
                     $atts['id'] = $this->parse_id_from_url($atts['url']);
                 }
                 
                 // if no id, don't bother storing because it's wrong
                 if ($atts['id'] != null) {
-                    if ( $atts['format'] == "wide" || $atts['width'] > $defaults['width']) {
+                    if ($atts['format'] == "wide" || $atts['width'] > $defaults['width']) {
                         $wide_assets[$atts['id']] = true;
                     } else {
                         $wide_assets[$atts['id']] = false;
@@ -188,7 +187,7 @@ class Navis_DocumentCloud {
     function embed_shortcode($atts, $content, $code) {        
         global $post;
         $defaults = $this->get_defaults();
-        extract( shortcode_atts($defaults, $atts));
+        extract(shortcode_atts($defaults, $atts));
         
         // we need a document ID or URL, or it's a no op
         if ($url && !$id) {
@@ -199,10 +198,10 @@ class Navis_DocumentCloud {
         // still no id? nothin doing
         if (!$id) return;
         
-        # we only deal with integers
+        // we only deal with integers
         $height = intval($height);
         $width = intval($width);
-        if ($format == "wide") {
+        if ($format == 'wide') {
             $width = get_option('documentcloud_full_width', 940);
         }
         
