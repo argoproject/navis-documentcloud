@@ -1,4 +1,4 @@
-=== Navis DocumentCloud ===
+=== DocumentCloud ===
 Contributors: chrisamico
 Tags: documentcloud, documents
 Requires at least: 3.2
@@ -41,7 +41,7 @@ This will use default height and width settings, which you can update in the Wor
 
 == Installation ==
 
-1. Upload the navis-documentcloud directory to `wp-content/plugins/wordpress-documentcloud`
+1. Upload the wp-documentcloud directory to `wp-content/plugins/wp-documentcloud`
 2. Activate the plugin
 3. In your posts, add documents using the DocumentCloud button, or the `[documentcloud]` shortcode.
 
