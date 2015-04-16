@@ -1,13 +1,15 @@
 <?php
 /***
- * Plugin Name: Navis DocumentCloud
- * Description: Embed DocumentCloud documents that won't be eaten by the visual editor
- * Version: 0.1
- * Author: Chris Amico
+ * Plugin Name: DocumentCloud
+ * Plugin URI: https://www.documentcloud.org/
+ * Description: Embed DocumentCloud resources in WordPress content.
+ * Version: 0.1.1
+ * Authors: Chris Amico, Justin Reese
  * License: GPLv2
 ***/
 /*
-    Copyright 2011 National Public Radio, Inc. 
+    Copyright 2011 National Public Radio, Inc.
+    Copyright 2015 DocumentCloud, Investigative Reporters & Editors
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
@@ -23,7 +25,7 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-class Navis_DocumentCloud {
+class WP_DocumentCloud {
     
     function __construct() {
 
@@ -51,7 +53,7 @@ class Navis_DocumentCloud {
         
     function add_tinymce_plugin($plugin_array) {
         $plugin_array['documentcloud'] = plugins_url(
-            'js/navis-documentcloud-editor-plugin.js', __FILE__);
+            'js/documentcloud-editor-plugin.js', __FILE__);
         return $plugin_array;
     }
     
@@ -242,4 +244,4 @@ class Navis_DocumentCloud {
     }
 }
 
-new Navis_DocumentCloud;
+new WP_DocumentCloud;

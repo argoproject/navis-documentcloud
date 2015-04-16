@@ -24,7 +24,7 @@
 
             // Register example button
             ed.addButton('documentcloud', {
-                title : 'Document Cloud',
+                title : 'DocumentCloud',
                 cmd : 'documentcloud',
                 image : url + '/button.png'
             });
@@ -57,7 +57,7 @@
          */
         getInfo : function() {
             return {
-                longname : 'Navis DocumentCloud Plugin',
+                longname : 'DocumentCloud Plugin',
                 author : 'Chris Amico',
                 authorurl : 'http://stateimpact.npr.org/',
                 infourl : 'http://stateimpact.npr.org/',

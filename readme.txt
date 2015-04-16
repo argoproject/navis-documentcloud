@@ -1,15 +1,15 @@
-=== Navis DocumentCloud ===
-Contributors: chrisamico
+=== DocumentCloud ===
+Contributors: chrisamico, reefdog
 Tags: documentcloud, documents
 Requires at least: 3.2
 Tested up to: 3.9.1
 Stable tag: trunk
 
-Embed DocumentCloud documents that won't be eaten by the visual editor.
+Embed DocumentCloud resources in WordPress content.
 
 == Description ==
 
-[DocumentCloud](http://www.documentcloud.org/home) is a free service allowing journalists to analyze, annotate and publish documents, funded by the Knight Foundation. Initial development supported by [NPR](http://www.npr.org) as part of [StateImpact](http://stateimpact.npr.org) project.
+[DocumentCloud](https://www.documentcloud.org/) is a free service allowing journalists to analyze, annotate and publish documents, funded by the Knight Foundation. Initial development of this plugin supported by [NPR](http://www.npr.org) as part of [StateImpact](http://stateimpact.npr.org) project.
 
 DocumentCloud's normal embed code looks like this:
 
@@ -41,7 +41,7 @@ This will use default height and width settings, which you can update in the Wor
 
 == Installation ==
 
-1. Upload the navis-documentcloud directory to `wp-content/plugins/wordpress-documentcloud`
+1. Upload the documentcloud directory to `wp-content/plugins/documentcloud`
 2. Activate the plugin
 3. In your posts, add documents using the DocumentCloud button, or the `[documentcloud]` shortcode.
 
