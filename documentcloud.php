@@ -1,13 +1,15 @@
 <?php
 /***
  * Plugin Name: DocumentCloud
- * Description: Embed DocumentCloud resources that won't be eaten by the visual editor
+ * Plugin URI: https://www.documentcloud.org/
+ * Description: Embed DocumentCloud resources in WordPress content.
  * Version: 0.1.1
- * Author: Chris Amico
+ * Authors: Chris Amico, Justin Reese
  * License: GPLv2
 ***/
 /*
-    Copyright 2011 National Public Radio, Inc. 
+    Copyright 2011 National Public Radio, Inc.
+    Copyright 2015 DocumentCloud, Investigative Reporters & Editors
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
