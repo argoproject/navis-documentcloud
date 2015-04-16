@@ -24,7 +24,7 @@
 
             // Register example button
             ed.addButton('documentcloud', {
-                title : 'Document Cloud',
+                title : 'DocumentCloud',
                 cmd : 'documentcloud',
                 image : url + '/button.png'
             });
