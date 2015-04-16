@@ -9,7 +9,7 @@ Embed DocumentCloud resources in WordPress content.
 
 == Description ==
 
-[DocumentCloud](https://www.documentcloud.org/) is a free service allowing journalists to analyze, annotate and publish documents, funded by the Knight Foundation. Initial development of this plugin supported by [NPR](http://www.npr.org) as part of [StateImpact](http://stateimpact.npr.org) project.
+[DocumentCloud](https://www.documentcloud.org/) is a service that allows journalists to analyze, annotate and publish documents, hosted by Investigative Reporters & Editors. Initial development of this plugin supported by [NPR](http://www.npr.org) as part of [StateImpact](http://stateimpact.npr.org) project.
 
 DocumentCloud's normal embed code looks like this:
 
@@ -43,5 +43,4 @@ This will use default height and width settings, which you can update in the Wor
 
 1. Upload the documentcloud directory to `wp-content/plugins/documentcloud`
 2. Activate the plugin
-3. In your posts, add documents using the DocumentCloud button, or the `[documentcloud]` shortcode.
-
+3. In your posts, add documents using the DocumentCloud button or the `[documentcloud]` shortcode

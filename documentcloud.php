@@ -3,7 +3,7 @@
  * Plugin Name: DocumentCloud
  * Plugin URI: https://www.documentcloud.org/
  * Description: Embed DocumentCloud resources in WordPress content.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Authors: Chris Amico, Justin Reese
  * License: GPLv2
 ***/
@@ -29,17 +29,36 @@ class WP_DocumentCloud {
     
     function __construct() {
 
+        // Register us as an oEmbed provider
+        add_action('init', array(&$this, 'register_dc_oembed_provider'));
+        // Register [documentcloud] shortcode using old embed method
         add_shortcode('documentcloud', array(&$this, 'embed_shortcode'));
         
+        // Setup TinyMCE shortcode-generation plugin
         add_action('init', array(&$this, 'register_tinymce_filters'));
-        
+
+        // Process shortcodes and add admin settings
         add_action('save_post', array(&$this, 'save'));
-        
         add_action('admin_menu', array(&$this, 'add_options_page'));
-        
         add_action('admin_init', array(&$this, 'settings_init'));
     }
     
+    function register_dc_oembed_provider() {
+    /*
+        Hello developer. If you wish to test this plugin against your
+        local installation of DocumentCloud (with its own testing
+        domain), uncomment-out the next three lines and replace
+        `[your_domain]` with, uh, your domain. You'll also want to keep
+        the provider HTTP unless cURL can happily access your domain via
+        HTTPS. Please remember not to commit these back to the repo.
+    */
+        // add_filter( 'http_request_host_is_external', '__return_true' );
+        // wp_oembed_add_provider('http://[your_domain]/documents/*','http://[your_domain]/api/oembed.{format}');
+        // wp_oembed_add_provider('https://[your_domain]/documents/*','http://[your_domain]/api/oembed.{format}');
+
+        wp_oembed_add_provider('https://www.documentcloud.org/documents/*', 'https://www.documentcloud.org/api/oembed.{format}');
+    }
+
     function register_tinymce_filters() {
         add_filter('mce_external_plugins', 
             array(&$this, 'add_tinymce_plugin')
