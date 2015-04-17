@@ -3,7 +3,7 @@
  * Plugin Name: DocumentCloud
  * Plugin URI: https://www.documentcloud.org/
  * Description: Embed DocumentCloud resources in WordPress content.
- * Version: 0.1.2
+ * Version: 0.2
  * Authors: Chris Amico, Justin Reese
  * License: GPLv2
 ***/
@@ -29,18 +29,22 @@ class WP_DocumentCloud {
     
     function __construct() {
 
-        // Register us as an oEmbed provider
         add_action('init', array(&$this, 'register_dc_oembed_provider'));
-        // Register [documentcloud] shortcode using old embed method
-        add_shortcode('documentcloud', array(&$this, 'embed_shortcode'));
-        
+        add_shortcode('documentcloud', array(&$this, 'handle_dc_shortcode_with_caching'));
+        add_filter('oembed_fetch_url', array(&$this, 'add_dc_arguments'), 10, 3);
+
         // Setup TinyMCE shortcode-generation plugin
         add_action('init', array(&$this, 'register_tinymce_filters'));
 
-        // Process shortcodes and add admin settings
-        add_action('save_post', array(&$this, 'save'));
+        // Setup admin settings
         add_action('admin_menu', array(&$this, 'add_options_page'));
         add_action('admin_init', array(&$this, 'settings_init'));
+
+        // Register [documentcloud] shortcode using old embed method
+        // add_shortcode('documentcloud', array(&$this, 'embed_shortcode'));
+        
+        // Store metadata upon post save
+        // add_action('save_post', array(&$this, 'save'));
     }
     
     function register_dc_oembed_provider() {
@@ -56,8 +60,142 @@ class WP_DocumentCloud {
         // wp_oembed_add_provider('http://[your_domain]/documents/*','http://[your_domain]/api/oembed.{format}');
         // wp_oembed_add_provider('https://[your_domain]/documents/*','http://[your_domain]/api/oembed.{format}');
 
+        wp_oembed_add_provider('http://www.documentcloud.org/documents/*',  'https://www.documentcloud.org/api/oembed.{format}');
         wp_oembed_add_provider('https://www.documentcloud.org/documents/*', 'https://www.documentcloud.org/api/oembed.{format}');
     }
+
+    function default_dc_atts() {
+        // Notably, `maxwidth/maxheight` are NOT set here, even though
+        // they are proper attributes, because we let the user set them 
+        // in the settings area. See notes on `handle_dc_shortcode()`.
+        return array(
+            'url'               => null,
+            'container'         => null,
+            'notes'             => null,
+            'responsive_offset' => null,
+            'default_page'      => null,
+            'default_note'      => null,
+            'zoom'              => null,
+            'search'            => null,
+            'sidebar'           => 'false', // Backwards-compatibility
+            'text'              => 'true',  // Backwards-compatibility
+            'pdf'               => 'true',  // Backwards-compatibility
+            'responsive'        => null,
+        );
+    }
+
+    function add_dc_arguments($provider, $url, $args) {
+        foreach ($args as $key => $value) {
+            switch ($key) {
+                // We don't want to pass these three to the provider
+                case 'height':
+                case 'width':
+                case 'discover':
+                    break;
+                default:
+                    $provider = add_query_arg( $key, $value, $provider );
+                    break;
+            }
+        }
+    	return $provider;
+    }
+
+    function handle_dc_shortcode($atts) {
+        $filtered_atts = shortcode_atts($this->default_dc_atts(), $atts);
+
+        // This is a tricky bit of logic that ends up:
+        //  1. Allowing both `width/height` and `maxwidth/maxheight` as
+        //     acceptable shortcode parameters;
+        //  2. Only sending `maxwidth/maxheight` to the oEmbed service;
+        //  3. Respecting the user's settings
+        // To understand it, you must deeply understand the flow of
+        // data through the WordPress bowels, or at least misunderstand
+        // it in the same way we do. It could likely be cleaned up,
+        // but should be WELL TESTED if so.
+        if (isset($atts['maxheight'])) {
+            $filtered_atts['maxheight'] = $atts['maxheight'];
+        } else if (isset($atts['height'])) {
+            $filtered_atts['maxheight'] = $atts['height'];
+        } else {
+            $filtered_atts['maxheight'] = get_option('documentcloud_default_height', 600);
+        }
+        if (isset($atts['maxwidth'])) {
+            $filtered_atts['maxwidth'] = $atts['maxwidth'];
+        } else if (isset($atts['width'])) {
+            $filtered_atts['maxwidth'] = $atts['width'];
+        } else {
+            $filtered_atts['maxwidth'] = get_option('documentcloud_default_width', 620);
+        }
+
+        // Either the `url` or `id` attributes are required, but `id` 
+        // is only supported for backwards compatibility. If it's used,
+        // we force this to embed a document. I.e., it can't be used 
+        // for embedding notes, pages, or other non-document resources.
+        if (!$atts['url']) {
+            if (!$atts['id']) {
+                return '';
+            }
+            else {
+                $url = $filtered_atts['url'] = "https://www.documentcloud.org/documents/{$atts['id']}.html";
+            }
+        } else {
+            $url = $atts['url'];
+        }
+
+        return wp_oembed_get($url, $filtered_atts);
+    }
+
+    // This is an exact clone of `handle_dc_shortcode`, except that it 
+    // lets WordPress cache the result of the oEmbed call. Thanks to
+    // http://bit.ly/1HykA0U for this pattern.
+    function handle_dc_shortcode_with_caching($atts) {
+        global $wp_embed;
+
+        $filtered_atts = shortcode_atts($this->default_dc_atts(), $atts);
+
+        // This is a tricky bit of logic that ends up:
+        //  1. Allowing both `width/height` and `maxwidth/maxheight` as
+        //     acceptable shortcode parameters;
+        //  2. Only sending `maxwidth/maxheight` to the oEmbed service;
+        //  3. Respecting the user's settings
+        // To understand it, you must deeply understand the flow of
+        // data through the WordPress bowels, or at least misunderstand
+        // it in the same way we do. It could likely be cleaned up,
+        // but should be WELL TESTED if so.
+        if (isset($atts['maxheight'])) {
+            $filtered_atts['maxheight'] = $atts['maxheight'];
+        } else if (isset($atts['height'])) {
+            $filtered_atts['maxheight'] = $atts['height'];
+        } else {
+            $filtered_atts['maxheight'] = get_option('documentcloud_default_height', 600);
+        }
+        if (isset($atts['maxwidth'])) {
+            $filtered_atts['maxwidth'] = $atts['maxwidth'];
+        } else if (isset($atts['width'])) {
+            $filtered_atts['maxwidth'] = $atts['width'];
+        } else {
+            $filtered_atts['maxwidth'] = get_option('documentcloud_default_width', 620);
+        }
+
+        // Either the `url` or `id` attributes are required, but `id` 
+        // is only supported for backwards compatibility. If it's used,
+        // we force this to embed a document. I.e., it can't be used 
+        // for embedding notes, pages, or other non-document resources.
+        if (!$atts['url']) {
+            if (!$atts['id']) {
+                return '';
+            }
+            else {
+                $url = $filtered_atts['url'] = "https://www.documentcloud.org/documents/{$atts['id']}.html";
+            }
+        } else {
+            $url = $atts['url'];
+        }
+
+        return $wp_embed->shortcode($filtered_atts, $url);
+    }
+
+    // TinyMCE and settings page
 
     function register_tinymce_filters() {
         add_filter('mce_external_plugins', 
@@ -148,6 +286,8 @@ class WP_DocumentCloud {
     
     function settings_section() {}
     
+    // Hopefully can remove from here down?
+
     function save($post_id) {
         // tell the post if we're carrying a wide load        
         
