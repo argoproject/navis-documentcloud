@@ -26,11 +26,15 @@
 */
 
 class WP_DocumentCloud {
+
+    const CACHING_ENABLED        = false,
+          OEMBED_PROVIDER        = 'https://www.documentcloud.org/api/oembed.{format}',
+          OEMBED_RESOURCE_DOMAIN = 'www.documentcloud.org';
     
     function __construct() {
 
         add_action('init', array(&$this, 'register_dc_oembed_provider'));
-        add_shortcode('documentcloud', array(&$this, 'handle_dc_shortcode_with_caching'));
+        add_shortcode('documentcloud', array(&$this, 'handle_dc_shortcode'));
         add_filter('oembed_fetch_url', array(&$this, 'add_dc_arguments'), 10, 3);
 
         // Setup TinyMCE shortcode-generation plugin
@@ -51,17 +55,15 @@ class WP_DocumentCloud {
     /*
         Hello developer. If you wish to test this plugin against your
         local installation of DocumentCloud (with its own testing
-        domain), uncomment-out the next three lines and replace
-        `[your_domain]` with, uh, your domain. You'll also want to keep
-        the provider HTTP unless cURL can happily access your domain via
-        HTTPS. Please remember not to commit these back to the repo.
+        domain), set the OEMBED_PROVIDER and OEMBED_RESOURCE_DOMAIN
+        constants above to your local testing domain. You'll also want
+        to uncomment the next line to let WordPress connect to local
+        domains.
     */
-        // add_filter( 'http_request_host_is_external', '__return_true' );
-        // wp_oembed_add_provider('http://[your_domain]/documents/*','http://[your_domain]/api/oembed.{format}');
-        // wp_oembed_add_provider('https://[your_domain]/documents/*','http://[your_domain]/api/oembed.{format}');
+        // add_filter( 'http_request_host_is_external', '__return_true');
 
-        wp_oembed_add_provider('http://www.documentcloud.org/documents/*',  'https://www.documentcloud.org/api/oembed.{format}');
-        wp_oembed_add_provider('https://www.documentcloud.org/documents/*', 'https://www.documentcloud.org/api/oembed.{format}');
+        wp_oembed_add_provider("http://"  . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/*",  WP_DocumentCloud::OEMBED_PROVIDER);
+        wp_oembed_add_provider("https://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/*",  WP_DocumentCloud::OEMBED_PROVIDER);
     }
 
     function default_dc_atts() {
@@ -136,63 +138,21 @@ class WP_DocumentCloud {
                 return '';
             }
             else {
-                $url = $filtered_atts['url'] = "https://www.documentcloud.org/documents/{$atts['id']}.html";
+                $url = $filtered_atts['url'] = "https://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/{$atts['id']}.html";
             }
         } else {
             $url = $atts['url'];
         }
 
-        return wp_oembed_get($url, $filtered_atts);
-    }
-
-    // This is an exact clone of `handle_dc_shortcode`, except that it 
-    // lets WordPress cache the result of the oEmbed call. Thanks to
-    // http://bit.ly/1HykA0U for this pattern.
-    function handle_dc_shortcode_with_caching($atts) {
-        global $wp_embed;
-
-        $filtered_atts = shortcode_atts($this->default_dc_atts(), $atts);
-
-        // This is a tricky bit of logic that ends up:
-        //  1. Allowing both `width/height` and `maxwidth/maxheight` as
-        //     acceptable shortcode parameters;
-        //  2. Only sending `maxwidth/maxheight` to the oEmbed service;
-        //  3. Respecting the user's settings
-        // To understand it, you must deeply understand the flow of
-        // data through the WordPress bowels, or at least misunderstand
-        // it in the same way we do. It could likely be cleaned up,
-        // but should be WELL TESTED if so.
-        if (isset($atts['maxheight'])) {
-            $filtered_atts['maxheight'] = $atts['maxheight'];
-        } else if (isset($atts['height'])) {
-            $filtered_atts['maxheight'] = $atts['height'];
+        if (WP_DocumentCloud::CACHING_ENABLED) {
+            // This lets WordPress cache the result of the oEmbed call.
+            // Thanks to http://bit.ly/1HykA0U for this pattern.
+            global $wp_embed;
+            return $wp_embed->shortcode($filtered_atts, $url);
         } else {
-            $filtered_atts['maxheight'] = get_option('documentcloud_default_height', 600);
-        }
-        if (isset($atts['maxwidth'])) {
-            $filtered_atts['maxwidth'] = $atts['maxwidth'];
-        } else if (isset($atts['width'])) {
-            $filtered_atts['maxwidth'] = $atts['width'];
-        } else {
-            $filtered_atts['maxwidth'] = get_option('documentcloud_default_width', 620);
+            return wp_oembed_get($url, $filtered_atts);
         }
 
-        // Either the `url` or `id` attributes are required, but `id` 
-        // is only supported for backwards compatibility. If it's used,
-        // we force this to embed a document. I.e., it can't be used 
-        // for embedding notes, pages, or other non-document resources.
-        if (!$atts['url']) {
-            if (!$atts['id']) {
-                return '';
-            }
-            else {
-                $url = $filtered_atts['url'] = "https://www.documentcloud.org/documents/{$atts['id']}.html";
-            }
-        } else {
-            $url = $atts['url'];
-        }
-
-        return $wp_embed->shortcode($filtered_atts, $url);
     }
 
     // TinyMCE and settings page
