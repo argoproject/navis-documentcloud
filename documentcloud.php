@@ -51,7 +51,7 @@ class WP_DocumentCloud {
         // add_shortcode('documentcloud', array(&$this, 'embed_shortcode'));
         
         // Store metadata upon post save
-        // add_action('save_post', array(&$this, 'save'));
+        add_action('save_post', array(&$this, 'save'));
     }
     
     function register_dc_oembed_provider() {
@@ -190,21 +190,8 @@ class WP_DocumentCloud {
         return $buttons;
     }
     
-    function get_defaults() {
-        // add admin options to adjust these defaults
-        // storing js params as strings instead of real booleans
-        return array(
-            'url' => null,
-            'id' => null,
-            'height' => get_option('documentcloud_default_height', 600),
-            'width' => get_option('documentcloud_default_width', 620),
-            'format' => 'normal',
-            'sidebar' => 'false',
-            'text' => 'true',
-            'pdf' => 'true'
-        );
-    }
-    
+    // Setup settings for plugin
+
     function add_options_page() {
         add_options_page('DocumentCloud', 'DocumentCloud', 'manage_options', 
                         'documentcloud', array(&$this, 'render_options_page'));
@@ -257,8 +244,6 @@ class WP_DocumentCloud {
     
     function settings_section() {}
     
-    // Hopefully can remove from here down?
-
     function save($post_id) {
         // tell the post if we're carrying a wide load        
         
@@ -270,7 +255,7 @@ class WP_DocumentCloud {
             )) 
         ) { return; }
         
-        $defaults = $this->get_defaults();
+        $defaults = $this->get_default_atts();
         $wide_assets = get_post_meta($post_id, 'wide_assets', true);
         $documents = get_post_meta($post_id, 'documentcloud', true);
         $matches = array();
@@ -283,6 +268,11 @@ class WP_DocumentCloud {
                 $atts = shortcode_parse_atts($args[$i]);
                 $atts = shortcode_atts($defaults, $atts);
 
+                // TODO: Reconsider using document ID as array key,
+                // because we'll be using this same shortcode to
+                // consume more than just documents in the future.
+                // Perhaps we can use `url` as key?
+
                 // get a doc id to keep array keys consistent
                 if (isset($atts['url']) && !isset($atts['id']) ) {
                     $atts['id'] = $this->parse_id_from_url($atts['url']);
@@ -290,7 +280,8 @@ class WP_DocumentCloud {
                 
                 // if no id, don't bother storing because it's wrong
                 if ($atts['id'] != null) {
-                    if ($atts['format'] == "wide" || $atts['width'] > $defaults['width']) {
+                    $width = isset($atts['width']) ? $atts['width'] : $atts['maxwidth'];
+                    if ($atts['format'] == "wide" || $width > $defaults['maxwidth']) {
                         $wide_assets[$atts['id']] = true;
                     } else {
                         $wide_assets[$atts['id']] = false;
@@ -303,7 +294,6 @@ class WP_DocumentCloud {
         }
         update_post_meta($post_id, 'documents', $documents);
         update_post_meta($post_id, 'wide_assets', $wide_assets);
-                
     }
     
     function parse_id_from_url($url) {
@@ -316,6 +306,26 @@ class WP_DocumentCloud {
         }
     }
     
+    // TODO: Remove this once we've ensured `handle_dc_shortcode()` 
+    // replicates all the functionality properly. Note that `save()` 
+    // has been adjusted to use `get_default_atts()`, but I left 
+    // `embed_shortcode()` using `get_defaults()` for inspection.
+
+    function get_defaults() {
+        // add admin options to adjust these defaults
+        // storing js params as strings instead of real booleans
+        return array(
+            'url' => null,
+            'id' => null,
+            'height' => get_option('documentcloud_default_height', 600),
+            'width' => get_option('documentcloud_default_width', 620),
+            'format' => 'normal',
+            'sidebar' => 'false',
+            'text' => 'true',
+            'pdf' => 'true'
+        );
+    }
+
     function embed_shortcode($atts, $content, $code) {        
         global $post;
         $defaults = $this->get_defaults();
