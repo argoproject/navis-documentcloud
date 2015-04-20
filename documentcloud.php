@@ -27,9 +27,11 @@
 
 class WP_DocumentCloud {
 
-    const CACHING_ENABLED        = false,
-          OEMBED_PROVIDER        = 'https://www.documentcloud.org/api/oembed.{format}',
-          OEMBED_RESOURCE_DOMAIN = 'www.documentcloud.org';
+    const CACHING_ENABLED          = false,
+          DEFAULT_EMBED_HEIGHT     = 620,
+          DEFAULT_EMBED_WIDTH      = 600,
+          OEMBED_PROVIDER          = 'https://www.documentcloud.org/api/oembed.{format}',
+          OEMBED_RESOURCE_DOMAIN   = 'www.documentcloud.org';
     
     function __construct() {
 
@@ -66,10 +68,8 @@ class WP_DocumentCloud {
         wp_oembed_add_provider("https://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/*",  WP_DocumentCloud::OEMBED_PROVIDER);
     }
 
-    function default_dc_atts() {
-        // Notably, `maxwidth/maxheight` are NOT set here, even though
-        // they are proper attributes, because we let the user set them 
-        // in the settings area. See notes on `handle_dc_shortcode()`.
+    function get_default_atts() {
+        // TODO: Add admin options to adjust all defaults.
         return array(
             'url'               => null,
             'container'         => null,
@@ -79,20 +79,31 @@ class WP_DocumentCloud {
             'default_note'      => null,
             'zoom'              => null,
             'search'            => null,
-            'sidebar'           => 'false', // Backwards-compatibility
-            'text'              => 'true',  // Backwards-compatibility
-            'pdf'               => 'true',  // Backwards-compatibility
-            'responsive'        => null,
+            'responsive'        => 'true',
+            // The following defaults match the existing plugin, except 
+            // `height/width` are prefixed `max*` per the oEmbed spec.
+            // You can still use `height/width` for backwards
+            // compatibility, but they'll be mapped to `max*`.
+            // Precedence (lower number == higher priority):
+            //  1. `width` on shortcode
+            //  2. `maxwidth` from shortcode
+            //  3. Settings > DocumentCloud > "Default embed width"
+            //  4. `WP_DocumentCloud::DEFAULT_EMBED_WIDTH`
+            'maxheight'         => intval(get_option('documentcloud_default_height', WP_DocumentCloud::DEFAULT_EMBED_HEIGHT)),
+            'maxwidth'          => intval(get_option('documentcloud_default_width',  WP_DocumentCloud::DEFAULT_EMBED_WIDTH)),
+            'sidebar'           => 'false',
+            'text'              => 'true',
+            'pdf'               => 'true',
         );
     }
 
     function add_dc_arguments($provider, $url, $args) {
         foreach ($args as $key => $value) {
             switch ($key) {
-                // We don't want to pass these three to the provider
                 case 'height':
                 case 'width':
                 case 'discover':
+                    // Don't pass these attributes to the provider
                     break;
                 default:
                     $provider = add_query_arg( $key, $value, $provider );
@@ -103,31 +114,10 @@ class WP_DocumentCloud {
     }
 
     function handle_dc_shortcode($atts) {
-        $filtered_atts = shortcode_atts($this->default_dc_atts(), $atts);
-
-        // This is a tricky bit of logic that ends up:
-        //  1. Allowing both `width/height` and `maxwidth/maxheight` as
-        //     acceptable shortcode parameters;
-        //  2. Only sending `maxwidth/maxheight` to the oEmbed service;
-        //  3. Respecting the user's settings
-        // To understand it, you must deeply understand the flow of
-        // data through the WordPress bowels, or at least misunderstand
-        // it in the same way we do. It could likely be cleaned up,
-        // but should be WELL TESTED if so.
-        if (isset($atts['maxheight'])) {
-            $filtered_atts['maxheight'] = $atts['maxheight'];
-        } else if (isset($atts['height'])) {
-            $filtered_atts['maxheight'] = $atts['height'];
-        } else {
-            $filtered_atts['maxheight'] = get_option('documentcloud_default_height', 600);
-        }
-        if (isset($atts['maxwidth'])) {
-            $filtered_atts['maxwidth'] = $atts['maxwidth'];
-        } else if (isset($atts['width'])) {
-            $filtered_atts['maxwidth'] = $atts['width'];
-        } else {
-            $filtered_atts['maxwidth'] = get_option('documentcloud_default_width', 620);
-        }
+        $default_atts  = $this->get_default_atts();
+        // Smooshes together passed-in shortcode attributes with 
+        // default attributes/values.
+        $filtered_atts = shortcode_atts($default_atts, $atts);
 
         // Either the `url` or `id` attributes are required, but `id` 
         // is only supported for backwards compatibility. If it's used,
@@ -142,6 +132,14 @@ class WP_DocumentCloud {
             }
         } else {
             $url = $atts['url'];
+        }
+
+        // `height/width` beat `maxheight/maxwidth`; see full precedence list in `get_default_atts().
+        if (isset($atts['height'])) {
+            $filtered_atts['maxheight'] = $atts['height'];
+        }
+        if (isset($atts['width'])) {
+            $filtered_atts['maxwidth'] = $atts['width'];
         }
 
         if (WP_DocumentCloud::CACHING_ENABLED) {
