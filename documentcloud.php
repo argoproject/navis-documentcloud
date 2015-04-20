@@ -30,6 +30,7 @@ class WP_DocumentCloud {
     const CACHING_ENABLED          = false,
           DEFAULT_EMBED_HEIGHT     = 620,
           DEFAULT_EMBED_WIDTH      = 600,
+          DEFAULT_EMBED_FULL_WIDTH = 940,
           OEMBED_PROVIDER          = 'https://www.documentcloud.org/api/oembed.{format}',
           OEMBED_RESOURCE_DOMAIN   = 'www.documentcloud.org';
     
@@ -91,6 +92,7 @@ class WP_DocumentCloud {
             //  4. `WP_DocumentCloud::DEFAULT_EMBED_WIDTH`
             'maxheight'         => intval(get_option('documentcloud_default_height', WP_DocumentCloud::DEFAULT_EMBED_HEIGHT)),
             'maxwidth'          => intval(get_option('documentcloud_default_width',  WP_DocumentCloud::DEFAULT_EMBED_WIDTH)),
+            'format'            => 'normal',
             'sidebar'           => 'false',
             'text'              => 'true',
             'pdf'               => 'true',
@@ -100,6 +102,7 @@ class WP_DocumentCloud {
     function add_dc_arguments($provider, $url, $args) {
         foreach ($args as $key => $value) {
             switch ($key) {
+                case 'format':
                 case 'height':
                 case 'width':
                 case 'discover':
@@ -142,6 +145,16 @@ class WP_DocumentCloud {
             $filtered_atts['maxwidth'] = $atts['width'];
         }
 
+        // If the format is set to wide, it blows away all other width 
+        // settings.
+        if ($filtered_atts['format'] == 'wide') {
+            $filtered_atts['maxwidth'] = get_option('documentcloud_full_width', DEFAULT_EMBED_FULL_WIDTH);
+        }
+        
+        // For the benefit of some templates
+        global $post;
+        $is_wide = intval($filtered_atts['maxwidth']) > $default_atts['maxwidth'];
+
         if (WP_DocumentCloud::CACHING_ENABLED) {
             // This lets WordPress cache the result of the oEmbed call.
             // Thanks to http://bit.ly/1HykA0U for this pattern.
@@ -153,7 +166,7 @@ class WP_DocumentCloud {
 
     }
 
-    // TinyMCE and settings page
+    // Setup TinyMCE shortcode button
 
     function register_tinymce_filters() {
         add_filter('mce_external_plugins', 
