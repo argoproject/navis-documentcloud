@@ -124,7 +124,7 @@ class WP_DocumentCloud {
 
         // Either the `url` or `id` attributes are required, but `id` 
         // is only supported for backwards compatibility. If it's used,
-        // we force this to embed a document. I.e., it can't be used 
+        // we force this to embed a document. I.e., `id` can't be used 
         // for embedding notes, pages, or other non-document resources.
         if (!$atts['url']) {
             if (!$atts['id']) {
@@ -205,7 +205,7 @@ class WP_DocumentCloud {
             <?php do_settings_sections('documentcloud'); ?>
             
             <p><input class="button-primary" name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" /></p>
-            </form>
+        </form>
         <?php
     }
     
