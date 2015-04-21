@@ -1,9 +1,11 @@
 === DocumentCloud ===
 Contributors: chrisamico, reefdog
-Tags: documentcloud, documents
+Tags: documentcloud, documents, journalism, reporting, research
 Requires at least: 3.2
-Tested up to: 3.9.1
+Tested up to: 4.1.1
 Stable tag: trunk
+License: GPLv2
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Embed DocumentCloud resources in WordPress content.
 
@@ -11,36 +13,49 @@ Embed DocumentCloud resources in WordPress content.
 
 [DocumentCloud](https://www.documentcloud.org/) is a service that allows journalists to analyze, annotate and publish documents, hosted by Investigative Reporters & Editors. Initial development of this plugin supported by [NPR](http://www.npr.org) as part of [StateImpact](http://stateimpact.npr.org) project.
 
-DocumentCloud's normal embed code looks like this:
-
-    <div id="DV-viewer-265231-11-07-2011-letter-to-idaho-congressional" class="DV-container"></div>
-    <script src="http://s3.documentcloud.org/viewer/loader.js"></script>
-    <script>
-     DV.load('http://www.documentcloud.org/documents/265231-11-07-2011-letter-to-idaho-congressional.js', {
-        width: 600,
-        height: 450,
-        sidebar: false,
-        container: "#DV-viewer-265231-11-07-2011-letter-to-idaho-congressional"
-      });
-    </script>
-    
-That works great as long as you edit in HTML mode. Switch to the visual editor, and your container `div` disappears and your JavaScript is broken.
-
-To get around this, use this short code:
-
-    [documentcloud id="265231-11-07-2011-letter-to-idaho-congressional"]
-    
-Or use the URL from DocumentCloud:
+This plugin allows you embed DocumentCloud documents using a custom shortcode:
 
     [documentcloud url="http://www.documentcloud.org/documents/265231-11-07-2011-letter-to-idaho-congressional.html"]
 
-This will use default height and width settings, which you can update in the WordPress admin. To override defaults on a specific document, pass them into the shortcode:
+When you save, WordPress fetches and stores the actual embed code HTML from the DocumentCloud servers using oEmbed. You can freely toggle between visual and HTML mode without mangling embed code, and your embed will always be up to date with the latest embed code.
 
-    [documentcloud id="265231-11-07-2011-letter-to-idaho-congressional" width="400" height="500" sidebar="true"]
+By default, the embed will be 600px wide and 620px tall. You can set your own defaults in Settings > DocumentCloud, or override the defaults on individual embeds using these attributes:
 
+    [documentcloud url="http://www.documentcloud.org/documents/265231-11-07-2011-letter-to-idaho-congressional.html" width="400" height="500"]
+
+Here's the full list of embed options you can pass via shortcode attributes:
+
+- `url` (**required**, string): Full URL of the DocumentCloud resource.
+- `container` (string): ID of element to insert the document into; if excluded, embedder will create its own container.
+- `height` (integer): Height (in pixels) of the embed.
+- `width` (integer): Width (in pixels) of the embed.
+- `responsive` (boolean): Use responsive layout.
+- `responsive_offset` (integer): Distance (in pixels) to vertically offset the viewer for some responsive embeds.
+- `default_page` (integer): Page number to have the document scroll to by default.
+- `default_note` (integer): ID of the note that the document should highlight by default.
+- `notes` (boolean): Show/hide notes:
+- `search` (boolean): Hide or show search form.
+- `sidebar` (boolean): Hide or show sidebar. Defaults `false`.
+- `pdf` (boolean): Hide or show link to download original PDF.
+- `text` (boolean): Hide or show text tab.
+- `zoom` (boolean): Hide or show zoom slider.
+- `format` (string): Indicate to the theme that this is a wide asset by setting this to `wide`. Defaults `normal`.
+
+You can read more about publishing and embedding DocumentCloud resources on https://www.documentcloud.org/help/publishing.
 
 == Installation ==
 
-1. Upload the documentcloud directory to `wp-content/plugins/documentcloud`
-2. Activate the plugin
-3. In your posts, add documents using the DocumentCloud button or the `[documentcloud]` shortcode
+1. Upload the contents of the plugin to `wp-content/plugins/documentcloud`
+2. Activate the plugin through the "Plugins" menu
+3. Optionally set a default width/height for all DocumentCloud embeds (which can be overridden on a per-embed basis with the `height/width` attributes)
+4. In your posts, add documents using the DocumentCloud button or the `[documentcloud]` shortcode
+
+== Changelog ==
+
+= 0.2 =
+* Fetch embed code via oEmbed instead of generating statically.
+* Added new options: `container`, `responsive`, `responsive_offset`, `default_page`, `default_note`, `notes`, `search`, and `zoom`.
+* Deprecated `id` attribute. It's still usable, but support may drop in the future. Use `url` instead.
+
+= 0.1 =
+* Initial release.
