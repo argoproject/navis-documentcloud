@@ -15,13 +15,13 @@ Embed DocumentCloud resources in WordPress content.
 
 This plugin allows you embed DocumentCloud documents using a custom shortcode:
 
-    [documentcloud url="http://www.documentcloud.org/documents/265231-11-07-2011-letter-to-idaho-congressional.html"]
+    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html"]
 
 When you save, WordPress fetches and stores the actual embed code HTML from the DocumentCloud servers using oEmbed. You can freely toggle between visual and HTML mode without mangling embed code, and your embed will always be up to date with the latest embed code.
 
 By default, the embed will be 600px wide and 620px tall. You can set your own defaults in Settings > DocumentCloud, or override the defaults on individual embeds using these attributes:
 
-    [documentcloud url="http://www.documentcloud.org/documents/265231-11-07-2011-letter-to-idaho-congressional.html" width="400" height="500"]
+    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html" width="400" height="500"]
 
 Here's the full list of embed options you can pass via shortcode attributes:
 
@@ -47,7 +47,7 @@ You can read more about publishing and embedding DocumentCloud resources on http
 
 1. Upload the contents of the plugin to `wp-content/plugins/documentcloud`
 2. Activate the plugin through the "Plugins" menu
-3. Optionally set a default width/height for all DocumentCloud embeds (which can be overridden on a per-embed basis with the `height/width` attributes)
+3. Set a default width/height for all DocumentCloud embeds (which can be overridden on a per-embed basis with the `height/width` attributes) at Settings > DocumentCloud
 4. In your posts, add documents using the DocumentCloud button or the `[documentcloud]` shortcode
 
 == Changelog ==
