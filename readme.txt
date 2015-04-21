@@ -59,3 +59,8 @@ You can read more about publishing and embedding DocumentCloud resources on http
 
 = 0.1 =
 * Initial release.
+
+== Upgrade Notice ==
+
+= 0.2 =
+Adds oEmbed support for future-proofing embed codes. Provides additional embed options like `default_page`.
