@@ -80,7 +80,7 @@ class WP_DocumentCloud {
             'default_note'      => null,
             'zoom'              => null,
             'search'            => null,
-            'responsive'        => 'true',
+            'responsive'        => null,
             // The following defaults match the existing plugin, except 
             // `height/width` are prefixed `max*` per the oEmbed spec.
             // You can still use `height/width` for backwards
