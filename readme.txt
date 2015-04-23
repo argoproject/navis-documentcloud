@@ -13,20 +13,27 @@ Embed DocumentCloud resources in WordPress content.
 
 [DocumentCloud](https://www.documentcloud.org/) is a service that allows journalists to analyze, annotate and publish documents, hosted by Investigative Reporters & Editors. Initial development of this plugin supported by [NPR](http://www.npr.org) as part of [StateImpact](http://stateimpact.npr.org) project.
 
-This plugin allows you embed DocumentCloud documents using a custom shortcode:
+This plugin allows you embed DocumentCloud resources using a custom shortcode:
 
     [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html"]
 
 When you save, WordPress fetches and stores the actual embed code HTML from the DocumentCloud servers using oEmbed. You can freely toggle between visual and HTML mode without mangling embed code, and your embed will always be up to date with the latest embed code.
 
-By default, the embed will be 600px wide and 620px tall. You can set your own defaults in Settings > DocumentCloud, or override the defaults on individual embeds using these attributes:
+By default, documents will be 600px wide and 620px tall. You can set your own defaults in Settings > DocumentCloud, or override the defaults on individual embeds using these attributes:
 
     [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html" width="400" height="500"]
 
-Here's the full list of embed options you can pass via shortcode attributes:
+You can also forego width/height and have the document fill the horizontal width of its container by using the `responsive="true"` shortcode. (Notes ignore width/height and always act responsively.)
+
+Here's the full list of embed options you can pass via shortcode attributes.
+
+All resources (documents and notes):
 
 - `url` (**required**, string): Full URL of the DocumentCloud resource.
-- `container` (string): ID of element to insert the document into; if excluded, embedder will create its own container.
+- `container` (string): ID of element to insert the embed into; if excluded, embedder will create its own container.
+
+Documents only:
+
 - `height` (integer): Height (in pixels) of the embed.
 - `width` (integer): Width (in pixels) of the embed.
 - `responsive` (boolean): Use responsive layout.
@@ -52,6 +59,9 @@ You can read more about publishing and embedding DocumentCloud resources on http
 
 == Changelog ==
 
+= 0.3 =
+* Added support for embedding notes.
+
 = 0.2 =
 * Fetch embed code via oEmbed instead of generating statically.
 * Added new options: `container`, `responsive`, `responsive_offset`, `default_page`, `default_note`, `notes`, `search`, and `zoom`.
@@ -61,6 +71,9 @@ You can read more about publishing and embedding DocumentCloud resources on http
 * Initial release.
 
 == Upgrade Notice ==
+
+= 0.3 =
+Adds support for embedding notes.
 
 = 0.2 =
 Adds oEmbed support for future-proofing embed codes. Provides additional embed options like `default_page`.
