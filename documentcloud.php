@@ -64,7 +64,7 @@ class WP_DocumentCloud {
         to uncomment the next line to let WordPress connect to local
         domains.
     */
-        // add_filter( 'http_request_host_is_external', '__return_true');
+        add_filter( 'http_request_host_is_external', '__return_true');
 
         wp_oembed_add_provider("http://"  . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/*",  WP_DocumentCloud::OEMBED_PROVIDER);
         wp_oembed_add_provider("https://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/*",  WP_DocumentCloud::OEMBED_PROVIDER);
@@ -174,7 +174,7 @@ class WP_DocumentCloud {
             // Notes and note variants
             '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '/annotations/(?P<note_id>[0-9]+)\.(html|js)$}',
             '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '.html#document/p([0-9]+)/a(?P<note_id>[0-9]+)$}',
-            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '.html#annotations/a(?P<note_id>[0-9]+)$}',
+            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '.html#annotation/a(?P<note_id>[0-9]+)$}',
         );
 
         $elements = array();
