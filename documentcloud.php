@@ -31,8 +31,9 @@ class WP_DocumentCloud {
           DEFAULT_EMBED_HEIGHT     = 620,
           DEFAULT_EMBED_WIDTH      = 600,
           DEFAULT_EMBED_FULL_WIDTH = 940,
-          OEMBED_PROVIDER          = 'https://www.documentcloud.org/api/oembed.{format}',
-          OEMBED_RESOURCE_DOMAIN   = 'www.documentcloud.org';
+          OEMBED_RESOURCE_DOMAIN   = 'www.documentcloud.org',
+          OEMBED_PROVIDER          = 'http://www.documentcloud.org/api/oembed.{format}',
+          DOCUMENT_PATTERN         = '^(?P<protocol>https?)://www\.documentcloud\.org/documents/(?P<document_id>[0-9]+-[a-z0-9-]+)';
     
     function __construct() {
 
@@ -134,7 +135,7 @@ class WP_DocumentCloud {
                 $url = $filtered_atts['url'] = "https://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/{$atts['id']}.html";
             }
         } else {
-            $url = $atts['url'];
+            $url = $filtered_atts['url'] = $this->clean_url($atts['url']);
         }
 
         // `height/width` beat `maxheight/maxwidth`; see full precedence list in `get_default_atts().
@@ -164,6 +165,27 @@ class WP_DocumentCloud {
             return wp_oembed_get($url, $filtered_atts);
         }
 
+    }
+
+    function clean_url($url) {
+        $patterns = array(
+            // Document
+            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '\.html$}',
+            // Notes and note variants
+            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '/annotations/(?P<note_id>[0-9]+)\.(html|js)$}',
+            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '.html#document/p([0-9]+)/a(?P<note_id>[0-9]+)$}',
+            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '.html#annotations/a(?P<note_id>[0-9]+)$}',
+        );
+
+        $elements = array();
+        foreach ($patterns as $pattern) {
+            $perfect_match = preg_match($pattern, $url, $elements);
+            if ($perfect_match) {
+                return "{$elements['protocol']}://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/{$elements['document_id']}" .
+                        ($elements['note_id'] ? "/annotations/{$elements['note_id']}" : '') . '.html';
+            }
+        }
+        return $url;
     }
 
     // Setup TinyMCE shortcode button
