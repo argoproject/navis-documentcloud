@@ -32,7 +32,7 @@ class WP_DocumentCloud {
           DEFAULT_EMBED_WIDTH      = 600,
           DEFAULT_EMBED_FULL_WIDTH = 940,
           OEMBED_RESOURCE_DOMAIN   = 'www.documentcloud.org',
-          OEMBED_PROVIDER          = 'http://www.documentcloud.org/api/oembed.{format}',
+          OEMBED_PROVIDER          = 'https://www.documentcloud.org/api/oembed.{format}',
           DOCUMENT_PATTERN         = '^(?P<protocol>https?)://www\.documentcloud\.org/documents/(?P<document_id>[0-9]+-[a-z0-9-]+)';
     
     function __construct() {
