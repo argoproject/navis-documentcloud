@@ -119,8 +119,8 @@ class WP_DocumentCloud {
 
     function handle_dc_shortcode($atts) {
         $default_atts  = $this->get_default_atts();
-        // Smooshes together passed-in shortcode attributes with 
-        // default attributes/values.
+        // Smooshes together passed-in shortcode attrs with defaults
+        // and filters to only those we accept.
         $filtered_atts = shortcode_atts($default_atts, $atts);
 
         // Either the `url` or `id` attributes are required, but `id` 
@@ -135,6 +135,8 @@ class WP_DocumentCloud {
                 $url = $filtered_atts['url'] = "https://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/{$atts['id']}.html";
             }
         } else {
+            // Some resources (like notes) have multiple possible
+            // user-facing URLs. We recompose them into a single form.
             $url = $filtered_atts['url'] = $this->clean_url($atts['url']);
         }
 
@@ -149,7 +151,7 @@ class WP_DocumentCloud {
         // If the format is set to wide, it blows away all other width 
         // settings.
         if ($filtered_atts['format'] == 'wide') {
-            $filtered_atts['maxwidth'] = get_option('documentcloud_full_width', DEFAULT_EMBED_FULL_WIDTH);
+            $filtered_atts['maxwidth'] = get_option('documentcloud_full_width', WP_DocumentCloud::DEFAULT_EMBED_FULL_WIDTH);
         }
         
         // For the benefit of some templates
@@ -328,82 +330,6 @@ class WP_DocumentCloud {
         }
     }
     
-    // TODO: Remove this once we've ensured `handle_dc_shortcode()` 
-    // replicates all the functionality properly. Note that `save()` 
-    // has been adjusted to use `get_default_atts()`, but I left 
-    // `embed_shortcode()` using `get_defaults()` for inspection.
-
-    function get_defaults() {
-        // add admin options to adjust these defaults
-        // storing js params as strings instead of real booleans
-        return array(
-            'url' => null,
-            'id' => null,
-            'height' => get_option('documentcloud_default_height', 600),
-            'width' => get_option('documentcloud_default_width', 620),
-            'format' => 'normal',
-            'sidebar' => 'false',
-            'text' => 'true',
-            'pdf' => 'true'
-        );
-    }
-
-    function embed_shortcode($atts, $content, $code) {        
-        global $post;
-        $defaults = $this->get_defaults();
-        extract(shortcode_atts($defaults, $atts));
-        
-        // we need a document ID or URL, or it's a no op
-        if ($url && !$id) {
-            // parse id from url
-            $id = $this->parse_id_from_url($url);
-        }
-        
-        // still no id? nothin doing
-        if (!$id) return;
-        
-        // we only deal with integers
-        $height = intval($height);
-        $width = intval($width);
-        if ($format == 'wide') {
-            $width = get_option('documentcloud_full_width', 940);
-        }
-        
-        $is_wide = $width > $defaults['width'];
-        
-        // full control in single templates
-        if (is_single() || is_page()) {
-            return "
-            <div id='DV-viewer-$id' class='DV-container'></div>
-            <script src='http://s3.documentcloud.org/viewer/loader.js'></script>
-            <script>
-              DV.load('http://www.documentcloud.org/documents/$id.js', {
-                width: $width,
-                height: $height,
-                sidebar: $sidebar,
-                text: $text,
-                pdf: $pdf,
-                container: '#DV-viewer-$id'
-              });
-            </script>";
-
-        } else {
-            // index view is always normal width, no sidebar
-            return "
-            <div id='DV-viewer-$id' class='DV-container'></div>
-            <script src='http://s3.documentcloud.org/viewer/loader.js'></script>
-            <script>
-              DV.load('http://www.documentcloud.org/documents/$id.js', {
-                width: {$defaults['width']},
-                height: $height,
-                sidebar: {$defaults['sidebar']},
-                text: $text,
-                pdf: $pdf,
-                container: '#DV-viewer-$id'
-              });
-            </script>";
-        }
-    }
 }
 
 new WP_DocumentCloud;
