@@ -31,7 +31,7 @@ class WP_DocumentCloud {
           DEFAULT_EMBED_FULL_WIDTH = 940,
           OEMBED_RESOURCE_DOMAIN   = 'www.documentcloud.org',
           OEMBED_PROVIDER          = 'https://www.documentcloud.org/api/oembed.{format}',
-          DOCUMENT_PATTERN         = '^(?P<protocol>https?)://www\.documentcloud\.org/documents/(?P<document_id>[0-9]+-[a-z0-9-]+)';
+          DOCUMENT_PATTERN         = '^(?P<protocol>https?)://www\.documentcloud\.org/documents/(?P<document_slug>[0-9]+-[a-z0-9-]+)';
     
     function __construct() {
 
@@ -153,7 +153,7 @@ class WP_DocumentCloud {
         } else {
             // Some resources (like notes) have multiple possible
             // user-facing URLs. We recompose them into a single form.
-            $url = $filtered_atts['url'] = $this->clean_url($atts['url']);
+            $url = $filtered_atts['url'] = $this->clean_dc_url($atts['url']);
         }
 
         // `height/width` beat `maxheight/maxwidth`; see full precedence list in `get_default_atts()`.
@@ -195,7 +195,7 @@ class WP_DocumentCloud {
 
     }
 
-    function clean_url($url) {
+    function parse_dc_url($url) {
         $patterns = array(
             // Document
             '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '\.html$}',
@@ -209,9 +209,17 @@ class WP_DocumentCloud {
         foreach ($patterns as $pattern) {
             $perfect_match = preg_match($pattern, $url, $elements);
             if ($perfect_match) {
-                return "{$elements['protocol']}://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/{$elements['document_id']}" .
-                        ($elements['note_id'] ? "/annotations/{$elements['note_id']}" : '') . '.html';
+                break;
             }
+        }
+        return $elements;
+    }
+
+    function clean_dc_url($url) {
+        $elements = $this->parse_dc_url($url);
+        if ($elements['document_slug']) {
+            $url = "{$elements['protocol']}://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/{$elements['document_slug']}" .
+                   ($elements['note_id'] ? "/annotations/{$elements['note_id']}" : '') . '.html';
         }
         return $url;
     }
@@ -307,7 +315,8 @@ class WP_DocumentCloud {
             )) 
         ) { return; }
         
-        $defaults = $this->get_default_atts();
+        $default_sizes = $this->get_default_sizes();
+        $default_atts = $this->get_default_atts();
         $wide_assets = get_post_meta($post_id, 'wide_assets', true);
         $documents = get_post_meta($post_id, 'documentcloud', true);
         $matches = array();
@@ -317,45 +326,31 @@ class WP_DocumentCloud {
         $args = $matches[3];
         foreach($tags as $i => $tag) {
             if ($tag == "documentcloud") {
-                $atts = shortcode_parse_atts($args[$i]);
-                $atts = shortcode_atts($defaults, $atts);
-
-                // TODO: Reconsider using document ID as array key,
-                // because we'll be using this same shortcode to
-                // consume more than just documents in the future.
-                // Perhaps we can use `url` as key?
+                $parsed_atts = shortcode_parse_atts($args[$i]);
+                $atts = shortcode_atts($default_atts, $parsed_atts);
 
                 // get a doc id to keep array keys consistent
-                if (isset($atts['url']) && !isset($atts['id']) ) {
-                    $atts['id'] = $this->parse_id_from_url($atts['url']);
+                if (isset($atts['url'])) {
+                    $elements = $this->parse_dc_url($atts['url']);
+                    $meta_key = $elements['document_slug'];
+                } else if (isset($atts['id'])) {
+                    $meta_key = $atts['id'];
                 }
                 
                 // if no id, don't bother storing because it's wrong
-                if ($atts['id'] != null) {
-                    $width = isset($atts['width']) ? $atts['width'] : $atts['maxwidth'];
-                    if ($atts['format'] == "wide" || $width > $defaults['maxwidth']) {
-                        $wide_assets[$atts['id']] = true;
+                if ($meta_key) {
+                    $width = intval(isset($parsed_atts['width']) ? $parsed_atts['width'] : $atts['maxwidth']);
+                    if ($atts['format'] == "wide" || $width > $default_sizes['width']) {
+                        $wide_assets[$meta_key] = true;
                     } else {
-                        $wide_assets[$atts['id']] = false;
+                        $wide_assets[$meta_key] = false;
                     }
-                
-                    $documents[$atts['id']] = $atts;
-                    
+                    $documents[$meta_key] = $atts;
                 }
             }
         }
         update_post_meta($post_id, 'documents', $documents);
         update_post_meta($post_id, 'wide_assets', $wide_assets);
-    }
-    
-    function parse_id_from_url($url) {
-        $regex = '{^https://www\.documentcloud\.org/documents/(?P<id>.+)\.html}';
-        $matches = array();
-        if (preg_match($regex, $url, $matches)) {
-            return $matches['id'];
-        } else {
-            return null;
-        }
     }
     
 }
