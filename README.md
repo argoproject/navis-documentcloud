@@ -48,6 +48,7 @@ To embed a note, use any note-specific URL:
 
 ### 0.3
 * Added support for embedding notes.
+* Default to responsive
 
 ### 0.2
 * Fetch embed code via oEmbed instead of generating statically.

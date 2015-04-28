@@ -61,6 +61,7 @@ You can read more about publishing and embedding DocumentCloud resources on http
 
 = 0.3 =
 * Added support for embedding notes.
+* Default to responsive
 
 = 0.2 =
 * Fetch embed code via oEmbed instead of generating statically.
