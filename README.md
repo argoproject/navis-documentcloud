@@ -23,8 +23,8 @@ There are many options you can set using shortcode attributes. Some are specific
 ### Documents only:
 
 - `height` (integer): Height (in pixels) of the embed.
-- `width` (integer): Width (in pixels) of the embed.
-- `responsive` (boolean): Use responsive layout.
+- `width` (integer): Width (in pixels) of the embed. If used, will implicitly set `responsive="false"`.
+- `responsive` (boolean): Use responsive layout, which dynamically adjusts width to fill content area. Defaults `true`.
 - `responsive_offset` (integer): Distance (in pixels) to vertically offset the viewer for some responsive embeds.
 - `default_page` (integer): Page number to have the document scroll to by default.
 - `default_note` (integer): ID of the note that the document should highlight by default.
@@ -36,9 +36,9 @@ There are many options you can set using shortcode attributes. Some are specific
 - `zoom` (boolean): Hide or show zoom slider.
 - `format` (string): Indicate to the theme that this is a wide asset by setting this to `wide`. Defaults `normal`.
 
-For example, if you want to embed a document at 800px wide with no sidebar, pre-scrolled to page 3:
+For example, if you want to embed a document at 800px wide, pre-scrolled to page 3:
 
-    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html" width="800" sidebar="false" default_page="3"]
+    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html" responsive="false" width="800" default_page="3"]
 
 To embed a note, use any note-specific URL:
 

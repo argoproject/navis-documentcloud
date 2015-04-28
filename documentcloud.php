@@ -163,6 +163,15 @@ class WP_DocumentCloud {
         if (isset($atts['width'])) {
             $filtered_atts['maxwidth'] = $atts['width'];
         }
+        
+        // `responsive` defaults true, but our responsive layout 
+        // ignores width declarations. If a user indicates a width and 
+        // hasn't otherwise specifically indicated `responsive='true'`, 
+        // it's safe to assume they expect us to respect the width, so 
+        // we disable the responsive flag.
+        if ((isset($atts['width']) || isset($atts['maxwidth'])) && (string) $atts['responsive'] != 'true') {
+            $filtered_atts['responsive'] = 'false';
+        }
 
         // If the format is set to wide, it blows away all other width 
         // settings.
@@ -241,6 +250,8 @@ class WP_DocumentCloud {
     function render_options_page() { ?>
         <h2>DocumentCloud Options</h2>
         <form action="options.php" method="post">
+
+            <p>Any widths set here will only take effect if you set <code>responsive="false"</code> on an embed.</p>
             
             <?php settings_fields('documentcloud'); ?>
             <?php do_settings_sections('documentcloud'); ?>

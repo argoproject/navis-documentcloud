@@ -19,11 +19,15 @@ This plugin allows you embed DocumentCloud resources using a custom shortcode:
 
 When you save, WordPress fetches and stores the actual embed code HTML from the DocumentCloud servers using oEmbed. You can freely toggle between visual and HTML mode without mangling embed code, and your embed will always be up to date with the latest embed code.
 
-By default, documents will be 600px wide and 620px tall. You can set your own defaults in Settings > DocumentCloud, or override the defaults on individual embeds using these attributes:
+By default, documents will have a responsive width (it will narrow and widen as necessary to fill available content area) and use the theme's default height. If you want to override this, you can either set `responsive="false"` or explicitly set a `width`:
 
-    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html" width="400" height="500"]
+    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html" width="600"]
 
-You can also forego width/height and have the document fill the horizontal width of its container by using the `responsive="true"` shortcode. (Notes ignore width/height and always act responsively.)
+You can set your own defaults in Settings > DocumentCloud, but default widths will be ignored unless `responsive` is disabled:
+
+    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html" responsive="false"]
+
+Notes ignore `width/height` and always act responsively.
 
 Here's the full list of embed options you can pass via shortcode attributes.
 
@@ -35,16 +39,16 @@ All resources (documents and notes):
 Documents only:
 
 - `height` (integer): Height (in pixels) of the embed.
-- `width` (integer): Width (in pixels) of the embed.
-- `responsive` (boolean): Use responsive layout.
+- `width` (integer): Width (in pixels) of the embed. If used, will implicitly set `responsive="false"`.
+- `responsive` (boolean): Use responsive layout, which dynamically adjusts width to fill content area. Defaults `true`.
 - `responsive_offset` (integer): Distance (in pixels) to vertically offset the viewer for some responsive embeds.
 - `default_page` (integer): Page number to have the document scroll to by default.
 - `default_note` (integer): ID of the note that the document should highlight by default.
 - `notes` (boolean): Show/hide notes:
 - `search` (boolean): Hide or show search form.
 - `sidebar` (boolean): Hide or show sidebar. Defaults `false`.
-- `pdf` (boolean): Hide or show link to download original PDF.
-- `text` (boolean): Hide or show text tab.
+- `pdf` (boolean): Hide or show link to download original PDF. Defaults `true`.
+- `text` (boolean): Hide or show text tab. Defaults `true`.
 - `zoom` (boolean): Hide or show zoom slider.
 - `format` (string): Indicate to the theme that this is a wide asset by setting this to `wide`. Defaults `normal`.
 
