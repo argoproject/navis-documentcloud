@@ -28,8 +28,6 @@
 class WP_DocumentCloud {
 
     const CACHING_ENABLED          = false,
-          DEFAULT_EMBED_HEIGHT     = 620,
-          DEFAULT_EMBED_WIDTH      = 600,
           DEFAULT_EMBED_FULL_WIDTH = 940,
           OEMBED_RESOURCE_DOMAIN   = 'www.documentcloud.org',
           OEMBED_PROVIDER          = 'https://www.documentcloud.org/api/oembed.{format}',
@@ -64,14 +62,30 @@ class WP_DocumentCloud {
         to uncomment the next line to let WordPress connect to local
         domains.
     */
-        add_filter( 'http_request_host_is_external', '__return_true');
+        // add_filter( 'http_request_host_is_external', '__return_true');
 
         wp_oembed_add_provider("http://"  . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/*",  WP_DocumentCloud::OEMBED_PROVIDER);
         wp_oembed_add_provider("https://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/*",  WP_DocumentCloud::OEMBED_PROVIDER);
     }
 
+    function get_default_sizes() {
+        $wp_embed_defaults = wp_embed_defaults();
+
+        $height     = intval(get_option('documentcloud_default_height', $wp_embed_defaults['height']));
+        $width      = intval(get_option('documentcloud_default_width', $wp_embed_defaults['width']));
+        $full_width = intval(get_option('documentcloud_full_width', WP_DocumentCloud::DEFAULT_EMBED_FULL_WIDTH));
+
+        return array (
+            'height'     => $height,
+            'width'      => $width,
+            'full_width' => $full_width,
+        );
+    }
+
+    // TODO: Add admin options to adjust all defaults.
     function get_default_atts() {
-        // TODO: Add admin options to adjust all defaults.
+        $default_sizes = $this->get_default_sizes();
+
         return array(
             'url'               => null,
             'container'         => null,
@@ -88,11 +102,11 @@ class WP_DocumentCloud {
             // compatibility, but they'll be mapped to `max*`.
             // Precedence (lower number == higher priority):
             //  1. `width` on shortcode
-            //  2. `maxwidth` from shortcode
+            //  2. `maxwidth` on shortcode
             //  3. Settings > DocumentCloud > "Default embed width"
-            //  4. `WP_DocumentCloud::DEFAULT_EMBED_WIDTH`
-            'maxheight'         => intval(get_option('documentcloud_default_height', WP_DocumentCloud::DEFAULT_EMBED_HEIGHT)),
-            'maxwidth'          => intval(get_option('documentcloud_default_width',  WP_DocumentCloud::DEFAULT_EMBED_WIDTH)),
+            //  4. `wp_embed_defaults()['width']`
+            'maxheight'         => $default_sizes['height'],
+            'maxwidth'          => $default_sizes['width'],
             'format'            => 'normal',
             'sidebar'           => 'false',
             'text'              => 'true',
@@ -118,10 +132,12 @@ class WP_DocumentCloud {
     }
 
     function handle_dc_shortcode($atts) {
-        $default_atts  = $this->get_default_atts();
+        $default_sizes  = $this->get_default_sizes();
+        $default_atts   = $this->get_default_atts();
+
         // Smooshes together passed-in shortcode attrs with defaults
         // and filters to only those we accept.
-        $filtered_atts = shortcode_atts($default_atts, $atts);
+        $filtered_atts  = shortcode_atts($default_atts, $atts);
 
         // Either the `url` or `id` attributes are required, but `id` 
         // is only supported for backwards compatibility. If it's used,
@@ -140,7 +156,7 @@ class WP_DocumentCloud {
             $url = $filtered_atts['url'] = $this->clean_url($atts['url']);
         }
 
-        // `height/width` beat `maxheight/maxwidth`; see full precedence list in `get_default_atts().
+        // `height/width` beat `maxheight/maxwidth`; see full precedence list in `get_default_atts()`.
         if (isset($atts['height'])) {
             $filtered_atts['maxheight'] = $atts['height'];
         }
@@ -151,12 +167,13 @@ class WP_DocumentCloud {
         // If the format is set to wide, it blows away all other width 
         // settings.
         if ($filtered_atts['format'] == 'wide') {
-            $filtered_atts['maxwidth'] = get_option('documentcloud_full_width', WP_DocumentCloud::DEFAULT_EMBED_FULL_WIDTH);
+            $filtered_atts['maxwidth'] = $default_sizes['full_width'];
         }
         
-        // For the benefit of some templates
+        // For the benefit of some templates, notify template that 
+        // we're requesting an asset wider than the default size.
         global $post;
-        $is_wide = intval($filtered_atts['maxwidth']) > $default_atts['maxwidth'];
+        $is_wide = intval($filtered_atts['maxwidth']) > $default_sizes['width'];
 
         if (WP_DocumentCloud::CACHING_ENABLED) {
             // This lets WordPress cache the result of the oEmbed call.
@@ -252,18 +269,18 @@ class WP_DocumentCloud {
     }
     
     function default_height_field() {
-        $option = intval(get_option('documentcloud_default_height', 600));
-        echo "<input type='text' value='$option' name='documentcloud_default_height' />";
+        $default_sizes = $this->get_default_sizes();
+        echo "<input type='text' value='{$default_sizes['height']}' name='documentcloud_default_height' />";
     }
     
     function default_width_field() {
-        $option = intval(get_option('documentcloud_default_width', 620));
-        echo "<input type='text' value='$option' name='documentcloud_default_width' />";
+        $default_sizes = $this->get_default_sizes();
+        echo "<input type='text' value='{$default_sizes['width']}' name='documentcloud_default_width' />";
     }
     
     function full_width_field() {
-        $option = intval(get_option('documentcloud_full_width', 620));
-        echo "<input type='text' value='$option' name='documentcloud_full_width' />";
+        $default_sizes = $this->get_default_sizes();
+        echo "<input type='text' value='{$default_sizes['full_width']}' name='documentcloud_full_width' />";
     }
     
     function settings_section() {}
