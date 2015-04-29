@@ -31,8 +31,8 @@ There are many options you can set using shortcode attributes. Some are specific
 - `notes` (boolean): Show/hide notes:
 - `search` (boolean): Hide or show search form.
 - `sidebar` (boolean): Hide or show sidebar. Defaults `false`.
-- `pdf` (boolean): Hide or show link to download original PDF.
-- `text` (boolean): Hide or show text tab.
+- `pdf` (boolean): Hide or show link to download original PDF. Defaults `true`.
+- `text` (boolean): Hide or show text tab. Defaults `true`.
 - `zoom` (boolean): Hide or show zoom slider.
 - `format` (string): Indicate to the theme that this is a wide asset by setting this to `wide`. Defaults `normal`.
 
