@@ -27,7 +27,7 @@
 
 class WP_DocumentCloud {
 
-    const CACHING_ENABLED          = false,
+    const CACHING_ENABLED          = true,
           DEFAULT_EMBED_FULL_WIDTH = 940,
           OEMBED_RESOURCE_DOMAIN   = 'www.documentcloud.org',
           OEMBED_PROVIDER          = 'https://www.documentcloud.org/api/oembed.{format}',
@@ -46,9 +46,6 @@ class WP_DocumentCloud {
         add_action('admin_menu', array(&$this, 'add_options_page'));
         add_action('admin_init', array(&$this, 'settings_init'));
 
-        // Register [documentcloud] shortcode using old embed method
-        // add_shortcode('documentcloud', array(&$this, 'embed_shortcode'));
-        
         // Store metadata upon post save
         add_action('save_post', array(&$this, 'save'));
     }
