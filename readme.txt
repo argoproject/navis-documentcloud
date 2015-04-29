@@ -27,16 +27,18 @@ You can set your own defaults in Settings > DocumentCloud, but default widths wi
 
     [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html" responsive="false"]
 
-Notes ignore `width/height` and always act responsively.
+To embed a note, just use any note-specific URL. Notes ignore `width/height` and always act responsively:
 
-Here's the full list of embed options you can pass via shortcode attributes.
+    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html#document/p1/a53674"]
 
-All resources (documents and notes):
+Here's the full list of embed options you can pass via shortcode attributes; some are specific to the type of resource you're embedding.
+
+**All resources (documents and notes):**
 
 - `url` (**required**, string): Full URL of the DocumentCloud resource.
 - `container` (string): ID of element to insert the embed into; if excluded, embedder will create its own container.
 
-Documents only:
+**Documents only:**
 
 - `height` (integer): Height (in pixels) of the embed.
 - `width` (integer): Width (in pixels) of the embed. If used, will implicitly set `responsive="false"`.
@@ -58,19 +60,20 @@ You can read more about publishing and embedding DocumentCloud resources on http
 
 1. Upload the contents of the plugin to `wp-content/plugins/documentcloud`
 2. Activate the plugin through the "Plugins" menu
-3. Set a default width/height for all DocumentCloud embeds (which can be overridden on a per-embed basis with the `height/width` attributes) at Settings > DocumentCloud
-4. In your posts, add documents using the DocumentCloud button or the `[documentcloud]` shortcode
+3. In your posts, embed documents or notes using the DocumentCloud button or the `[documentcloud]` shortcode
+4. Optional: Set a default width/height for all DocumentCloud embeds (which can be overridden on a per-embed basis with the `height/width` attributes) at Settings > DocumentCloud. (This default width will only be used if you set `responsive="false"` on an embed.)
 
 == Changelog ==
 
 = 0.3 =
-* Added support for embedding notes.
-* Default to responsive
+* Add support for embedding notes.
+* Default to responsive.
+* Enable caching.
 
 = 0.2 =
 * Fetch embed code via oEmbed instead of generating statically.
-* Added new options: `container`, `responsive`, `responsive_offset`, `default_page`, `default_note`, `notes`, `search`, and `zoom`.
-* Deprecated `id` attribute. It's still usable, but support may drop in the future. Use `url` instead.
+* Add new options: `container`, `responsive`, `responsive_offset`, `default_page`, `default_note`, `notes`, `search`, and `zoom`.
+* Deprecate `id` attribute. It's still usable, but support may drop in the future. Use `url` instead.
 
 = 0.1 =
 * Initial release.
@@ -78,7 +81,7 @@ You can read more about publishing and embedding DocumentCloud resources on http
 == Upgrade Notice ==
 
 = 0.3 =
-Adds support for embedding notes.
+Adds support for embedding notes and enables caching.
 
 = 0.2 =
 Adds oEmbed support for future-proofing embed codes. Provides additional embed options like `default_page`.
