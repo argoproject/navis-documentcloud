@@ -40,7 +40,7 @@ class WP_DocumentCloud {
         add_filter('oembed_fetch_url', array(&$this, 'add_dc_arguments'), 10, 3);
 
         // Setup TinyMCE shortcode-generation plugin
-        add_action('init', array(&$this, 'register_tinymce_filters'));
+        // add_action('init', array(&$this, 'register_tinymce_filters'));
 
         // Setup admin settings
         add_action('admin_menu', array(&$this, 'add_options_page'));
