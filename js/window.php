@@ -6,6 +6,9 @@ if (isset($_SERVER['HTTPS'])) {
 }
 $SITEURL .= $_SERVER[ 'HTTP_HOST' ] or $_SERVER[ 'SERVER_NAME' ];
 $SITEURL .= $_GET[ 'wpbase' ];
+if (substr($SITEURL, -1) != '/') {
+    $SITEURL .= '/';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

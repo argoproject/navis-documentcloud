@@ -1,17 +1,17 @@
-=== DocumentCloud ===
-Contributors: chrisamico, reefdog
-Tags: documentcloud, documents, journalism, reporting, research
-Requires at least: 3.2
-Tested up to: 4.2.1
-Stable tag: trunk
-License: GPLv2
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+# DocumentCloud WordPress plugin
 
-Embed DocumentCloud resources in WordPress content.
+The DocumentCloud WordPress plugin lets you embed [DocumentCloud](https://www.documentcloud.org/) resources into WordPress content using [shortcodes](https://codex.wordpress.org/Shortcode_API).
 
-== Description ==
+    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html"]
 
-[DocumentCloud](https://www.documentcloud.org/) is a service that allows journalists to analyze, annotate and publish documents, hosted by Investigative Reporters & Editors. Initial development of this plugin supported by [NPR](http://www.npr.org) as part of [StateImpact](http://stateimpact.npr.org) project.
+## Installation
+
+1. Upload the contents of the plugin to `wp-content/plugins/documentcloud`
+2. Activate the plugin through the "Plugins" menu
+3. In your posts, embed documents or notes using the DocumentCloud button or the `[documentcloud]` shortcode
+4. Optional: Set a default width/height for all DocumentCloud embeds (which can be overridden on a per-embed basis with the `height/width` attributes) at Settings > DocumentCloud. (This default width will only be used if you set `responsive="false"` on an embed.)
+
+## Usage
 
 This plugin allows you embed DocumentCloud resources using a custom shortcode:
 
@@ -33,12 +33,12 @@ To embed a note, just use any note-specific URL. Notes ignore `width/height` and
 
 Here's the full list of embed options you can pass via shortcode attributes; some are specific to the type of resource you're embedding.
 
-**All resources (documents and notes):**
+### All resources (documents and notes):
 
 - `url` (**required**, string): Full URL of the DocumentCloud resource.
 - `container` (string): ID of element to insert the embed into; if excluded, embedder will create its own container.
 
-**Documents only:**
+### Documents only:
 
 - `height` (integer): Height (in pixels) of the embed.
 - `width` (integer): Width (in pixels) of the embed. If used, will implicitly set `responsive="false"`.
@@ -56,32 +56,32 @@ Here's the full list of embed options you can pass via shortcode attributes; som
 
 You can read more about publishing and embedding DocumentCloud resources on https://www.documentcloud.org/help/publishing.
 
-== Installation ==
+## Caching
 
-1. Upload the contents of the plugin to `wp-content/plugins/documentcloud`
-2. Activate the plugin through the "Plugins" menu
-3. In your posts, embed documents or notes using the DocumentCloud button or the `[documentcloud]` shortcode
-4. Optional: Set a default width/height for all DocumentCloud embeds (which can be overridden on a per-embed basis with the `height/width` attributes) at Settings > DocumentCloud. (This default width will only be used if you set `responsive="false"` on an embed.)
+Ideally, when WordPress hits our oEmbed service to fetch the embed code, it would obey the `cache_age` we return. Despite [conversation](https://core.trac.wordpress.org/ticket/14759) around this, it doesn't seem to.
 
-== Changelog ==
+Instead, it lets us choose between no cache at all (so *every pageload* triggers a call to our oEmbed service to get the embed code) or a supposed 24-hour cache stored in the `postmeta` table. Unfortunately, [our tests](https://github.com/documentcloud/wordpress-documentcloud/issues/20) seem to show this cache is never expired, which means we can choose between no cache (thus possibly DDOSing ourselves) or a permanent cache (thus possibly having stale embed codes). We've chosen the latter; hopefully this cache does eventually expire, and our embed codes shouldn't change that often anyway.
 
-= 0.3 =
+If you find yourself absolutely needing to expire the cache, though, you have two choices:
+
+1. Delete the appropriate `_oembed_*` rows from your `postmeta` table.
+2. Modify the shortcode attributes for the embed, since this is recognized as a new embed by WordPress.
+
+## Changelog
+
+### 0.3
 * Add support for embedding notes.
 * Default to responsive.
 * Enable caching.
 
-= 0.2 =
+### 0.2
 * Fetch embed code via oEmbed instead of generating statically.
 * Add new options: `container`, `responsive`, `responsive_offset`, `default_page`, `default_note`, `notes`, `search`, and `zoom`.
 * Deprecate `id` attribute. It's still usable, but support may drop in the future. Use `url` instead.
 
-= 0.1 =
+### 0.1
 * Initial release.
 
-== Upgrade Notice ==
+## License and History
 
-= 0.3 =
-Adds support for embedding notes and enables caching.
-
-= 0.2 =
-Adds oEmbed support for future-proofing embed codes. Provides additional embed options like `default_page`.
+The DocumentCloud WordPress plugin is [GPLv2](http://www.gnu.org/licenses/gpl-2.0.html). Initial development of this plugin by Chris Amico (@eyeseast) supported by [NPR](http://www.npr.org) as part of [StateImpact](http://stateimpact.npr.org) project. Development continued by Justin Reese (@reefdog) at [DocumentCloud](https://www.documentcloud.org/).
