@@ -330,6 +330,9 @@ class WP_DocumentCloud {
                 if (isset($atts['url'])) {
                     $elements = $this->parse_dc_url($atts['url']);
                     $meta_key = $elements['document_slug'];
+                    if ($elements['note_id']) {
+                        $meta_key .= "-{$elements['note_id']}";
+                    }
                 } else if (isset($atts['id'])) {
                     $meta_key = $atts['id'];
                 }
