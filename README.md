@@ -69,6 +69,9 @@ If you find yourself absolutely needing to expire the cache, though, you have tw
 
 ## Changelog
 
+### 0.3.x
+* Stop storing shortcode attributes in the `postmeta` table
+
 ### 0.3
 * Add support for embedding notes.
 * Default to responsive.
