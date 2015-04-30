@@ -315,7 +315,6 @@ class WP_DocumentCloud {
         $default_sizes = $this->get_default_sizes();
         $default_atts = $this->get_default_atts();
         $wide_assets = get_post_meta($post_id, 'wide_assets', true);
-        $documents = get_post_meta($post_id, 'documentcloud', true);
         $matches = array();
                 
         preg_match_all('/'.get_shortcode_regex().'/', $post->post_content, $matches);
@@ -345,11 +344,9 @@ class WP_DocumentCloud {
                     } else {
                         $wide_assets[$meta_key] = false;
                     }
-                    $documents[$meta_key] = $atts;
                 }
             }
         }
-        update_post_meta($post_id, 'documents', $documents);
         update_post_meta($post_id, 'wide_assets', $wide_assets);
     }
     
