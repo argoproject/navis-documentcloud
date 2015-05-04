@@ -71,7 +71,7 @@ You can read more about publishing and embedding DocumentCloud resources on http
 3. In your posts, embed documents or notes using the DocumentCloud button or the `[documentcloud]` shortcode
 4. Optional: Set a default width/height for all DocumentCloud embeds (which can be overridden on a per-embed basis with the `height/width` attributes) at Settings > DocumentCloud. (This default width will only be used if you set `responsive="false"` on an embed.)
 
-**Upgrading from Navis DocumentCloud** If you're currently using the Navis DocumentCloud plugin (from which this plugin was built), you'll want to deactivate or delete it before installing this plugin.
+**Upgrading from Navis DocumentCloud:** If you're currently using the Navis DocumentCloud plugin (from which this plugin was built), you'll want to deactivate or delete it before installing this plugin.
 
 == Changelog ==
 
