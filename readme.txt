@@ -73,7 +73,9 @@ You can read more about publishing and embedding DocumentCloud resources on http
 
 == Changelog ==
 
-= 0.3.x =
+= 0.3.1 =
+* Check for old (Navis) plugin and warn admins of conflict
+* Add note about raw URLs to README
 * Stop storing shortcode attributes in the `postmeta` table
 
 = 0.3 =
