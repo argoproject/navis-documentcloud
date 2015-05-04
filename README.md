@@ -13,7 +13,15 @@ The DocumentCloud WordPress plugin lets you embed [DocumentCloud](https://www.do
 
 ## Usage
 
-This plugin allows you embed DocumentCloud resources using a custom shortcode:
+This plugin allows you to embed DocumentCloud resources using either the raw URL on its own line:
+
+    Here's something you should really take a look at:
+    
+    https://www.documentcloud.org/documents/282753-lefler-thesis.html
+    
+    Isn't that interesting?
+
+Or a custom shortcode:
 
     [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html"]
 

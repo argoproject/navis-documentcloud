@@ -13,7 +13,15 @@ Embed DocumentCloud resources in WordPress content.
 
 [DocumentCloud](https://www.documentcloud.org/) is a service that allows journalists to analyze, annotate and publish documents, hosted by Investigative Reporters & Editors. Initial development of this plugin supported by [NPR](http://www.npr.org) as part of [StateImpact](http://stateimpact.npr.org) project.
 
-This plugin allows you embed DocumentCloud resources using a custom shortcode:
+This plugin allows you to embed DocumentCloud resources using either the raw URL on its own line:
+
+    Here's something you should really take a look at:
+    
+    https://www.documentcloud.org/documents/282753-lefler-thesis.html
+    
+    Isn't that interesting?
+
+Or a custom shortcode:
 
     [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html"]
 
