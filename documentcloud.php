@@ -25,6 +25,9 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+// Die if this isn't being called from within WordPress.
+defined( 'ABSPATH' ) or die();
+
 class WP_DocumentCloud {
 
     const CACHING_ENABLED          = true,
@@ -240,14 +243,15 @@ class WP_DocumentCloud {
     // Setup TinyMCE shortcode button
 
     function register_tinymce_filters() {
-        add_filter('mce_external_plugins', 
-            array(&$this, 'add_tinymce_plugin')
-        );
+        if (current_user_can('edit_posts')) {
+            add_filter('mce_external_plugins', 
+                array(&$this, 'add_tinymce_plugin')
+            );
 
-        add_filter('mce_buttons', 
-            array(&$this, 'register_button')
-        );
-        
+            add_filter('mce_buttons', 
+                array(&$this, 'register_button')
+            );
+        }
     }
         
     function add_tinymce_plugin($plugin_array) {
@@ -264,8 +268,10 @@ class WP_DocumentCloud {
     // Setup settings for plugin
 
     function add_options_page() {
-        add_options_page('DocumentCloud', 'DocumentCloud', 'manage_options', 
-                        'documentcloud', array(&$this, 'render_options_page'));
+        if (current_user_can('manage_options')) {
+            add_options_page('DocumentCloud', 'DocumentCloud', 'manage_options',
+                             'documentcloud', array(&$this, 'render_options_page'));
+        }
     }
     
     function render_options_page() { ?>
@@ -283,87 +289,89 @@ class WP_DocumentCloud {
     }
     
     function settings_init() {
-        add_settings_section('documentcloud', '',
-            array(&$this, 'settings_section'), 'documentcloud');
+        if (current_user_can('manage_options')) {
+            add_settings_section('documentcloud', '',
+                array(&$this, 'settings_section'), 'documentcloud');
         
-        add_settings_field('documentcloud_default_height', 'Default embed height (px)',
-            array(&$this, 'default_height_field'), 'documentcloud', 'documentcloud');
-        register_setting('documentcloud', 'documentcloud_default_height');
+            add_settings_field('documentcloud_default_height', 'Default embed height (px)',
+                array(&$this, 'default_height_field'), 'documentcloud', 'documentcloud');
+            register_setting('documentcloud', 'documentcloud_default_height');
         
-        add_settings_field('documentcloud_default_width', 'Default embed width (px)',
-            array(&$this, 'default_width_field'), 'documentcloud', 'documentcloud');
-        register_setting('documentcloud', 'documentcloud_default_width');
+            add_settings_field('documentcloud_default_width', 'Default embed width (px)',
+                array(&$this, 'default_width_field'), 'documentcloud', 'documentcloud');
+            register_setting('documentcloud', 'documentcloud_default_width');
         
-        add_settings_field('documentcloud_full_width', 'Full-width embed width (px)',
-            array(&$this, 'full_width_field'), 'documentcloud', 'documentcloud');
-        register_setting('documentcloud', 'documentcloud_full_width');
-        
+            add_settings_field('documentcloud_full_width', 'Full-width embed width (px)',
+                array(&$this, 'full_width_field'), 'documentcloud', 'documentcloud');
+            register_setting('documentcloud', 'documentcloud_full_width');
+        }
     }
     
     function default_height_field() {
         $default_sizes = $this->get_default_sizes();
-        echo "<input type='text' value='{$default_sizes['height']}' name='documentcloud_default_height' />";
+        echo '<input type="text" value="' . esc_html($default_sizes['height']) . '" name="documentcloud_default_height" />';
     }
     
     function default_width_field() {
         $default_sizes = $this->get_default_sizes();
-        echo "<input type='text' value='{$default_sizes['width']}' name='documentcloud_default_width' />";
+        echo '<input type="text" value="' . esc_html($default_sizes['width']) . '" name="documentcloud_default_width" />';
     }
     
     function full_width_field() {
         $default_sizes = $this->get_default_sizes();
-        echo "<input type='text' value='{$default_sizes['full_width']}' name='documentcloud_full_width' />";
+        echo '<input type="text" value="' . esc_html($default_sizes['full_width']) . '" name="documentcloud_full_width" />';
     }
     
     function settings_section() {}
     
     function save($post_id) {
         // tell the post if we're carrying a wide load        
+        if (current_user_can('edit_posts')) {
+            $post = get_post($post_id);
         
-        $post = get_post($post_id);
+            // avoid autosave
+            if (!in_array($post->post_status, array(
+                'publish', 'draft', 'private', 'future', 'pending'
+                )) 
+            ) { return; }
         
-        // avoid autosave
-        if (!in_array($post->post_status, array(
-            'publish', 'draft', 'private', 'future', 'pending'
-            )) 
-        ) { return; }
-        
-        $default_sizes = $this->get_default_sizes();
-        $default_atts = $this->get_default_atts();
-        $wide_assets = get_post_meta($post_id, 'wide_assets', true);
-        $matches = array();
+            $default_sizes = $this->get_default_sizes();
+            $default_atts = $this->get_default_atts();
+            $wide_assets = get_post_meta($post_id, 'wide_assets', true);
+            $matches = array();
                 
-        preg_match_all('/'.get_shortcode_regex().'/', $post->post_content, $matches);
-        $tags = $matches[2];
-        $args = $matches[3];
-        foreach($tags as $i => $tag) {
-            if ($tag == "documentcloud") {
-                $parsed_atts = shortcode_parse_atts($args[$i]);
-                $atts = shortcode_atts($default_atts, $parsed_atts);
+            preg_match_all('/'.get_shortcode_regex().'/', $post->post_content, $matches);
+            $tags = $matches[2];
+            $args = $matches[3];
+            foreach($tags as $i => $tag) {
+                if ($tag == "documentcloud") {
+                    $parsed_atts = shortcode_parse_atts($args[$i]);
+                    $atts = shortcode_atts($default_atts, $parsed_atts);
 
-                // get a doc id to keep array keys consistent
-                if (isset($atts['url'])) {
-                    $elements = $this->parse_dc_url($atts['url']);
-                    $meta_key = $elements['document_slug'];
-                    if ($elements['note_id']) {
-                        $meta_key .= "-{$elements['note_id']}";
+                    // get a doc id to keep array keys consistent
+                    if (isset($atts['url'])) {
+                        $elements = $this->parse_dc_url($atts['url']);
+                        $meta_key = $elements['document_slug'];
+                        if ($elements['note_id']) {
+                            $meta_key .= "-{$elements['note_id']}";
+                        }
+                    } else if (isset($atts['id'])) {
+                        $meta_key = $atts['id'];
                     }
-                } else if (isset($atts['id'])) {
-                    $meta_key = $atts['id'];
-                }
                 
-                // if no id, don't bother storing because it's wrong
-                if ($meta_key) {
-                    $width = intval(isset($parsed_atts['width']) ? $parsed_atts['width'] : $atts['maxwidth']);
-                    if ($atts['format'] == "wide" || $width > $default_sizes['width']) {
-                        $wide_assets[$meta_key] = true;
-                    } else {
-                        $wide_assets[$meta_key] = false;
+                    // if no id, don't bother storing because it's wrong
+                    if ($meta_key) {
+                        $width = intval(isset($parsed_atts['width']) ? $parsed_atts['width'] : $atts['maxwidth']);
+                        if ($atts['format'] == "wide" || $width > $default_sizes['width']) {
+                            $wide_assets[$meta_key] = true;
+                        } else {
+                            $wide_assets[$meta_key] = false;
+                        }
                     }
                 }
             }
+            update_post_meta($post_id, 'wide_assets', $wide_assets);
         }
-        update_post_meta($post_id, 'wide_assets', $wide_assets);
     }
     
 }
