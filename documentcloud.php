@@ -3,7 +3,7 @@
  * Plugin Name: DocumentCloud
  * Plugin URI: https://www.documentcloud.org/
  * Description: Embed DocumentCloud resources in WordPress content.
- * Version: 0.3.2
+ * Version: 0.3.3
  * Authors: Chris Amico, Justin Reese
  * License: GPLv2
 ***/
@@ -43,9 +43,6 @@ class WP_DocumentCloud {
         add_action('init', array(&$this, 'register_dc_oembed_provider'));
         add_shortcode('documentcloud', array(&$this, 'handle_dc_shortcode'));
         add_filter('oembed_fetch_url', array(&$this, 'add_dc_arguments'), 10, 3);
-
-        // Setup TinyMCE shortcode-generation plugin
-        // add_action('init', array(&$this, 'register_tinymce_filters'));
 
         // Setup admin settings
         add_action('admin_menu', array(&$this, 'add_options_page'));
@@ -240,31 +237,6 @@ class WP_DocumentCloud {
         return $url;
     }
 
-    // Setup TinyMCE shortcode button
-
-    function register_tinymce_filters() {
-        if (current_user_can('edit_posts')) {
-            add_filter('mce_external_plugins', 
-                array(&$this, 'add_tinymce_plugin')
-            );
-
-            add_filter('mce_buttons', 
-                array(&$this, 'register_button')
-            );
-        }
-    }
-        
-    function add_tinymce_plugin($plugin_array) {
-        $plugin_array['documentcloud'] = plugins_url(
-            'js/documentcloud-editor-plugin.js', __FILE__);
-        return $plugin_array;
-    }
-    
-    function register_button($buttons) {
-        array_push($buttons, '|', 'documentcloud');
-        return $buttons;
-    }
-    
     // Setup settings for plugin
 
     function add_options_page() {

@@ -75,6 +75,9 @@ You can read more about publishing and embedding DocumentCloud resources on http
 
 == Changelog ==
 
+= 0.3.3 =
+* Remove unused TinyMCE components
+
 = 0.3.2 =
 * Implement a few best practice security measures
 

@@ -79,6 +79,9 @@ If you find yourself absolutely needing to expire the cache, though, you have tw
 
 ## Changelog
 
+### 0.3.3
+* Remove unused TinyMCE components
+
 ### 0.3.2
 * Implement a few best practice security measures
 
