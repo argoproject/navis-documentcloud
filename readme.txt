@@ -5,40 +5,38 @@ Requires at least: 3.2
 Tested up to: 3.3.2
 Stable tag: trunk
 
-Embed DocumentCloud documents that won't be eaten by the visual editor.
+This plugin has been replaced by DocumentCloud. See description.
+
 
 == Description ==
 
-[DocumentCloud](http://www.documentcloud.org/home) is a free service allowing journalists to analyze, annotate and publish documents, funded by the Knight Foundation. Initial development supported by [NPR](http://www.npr.org) as part of [StateImpact](http://stateimpact.npr.org) project.
+**Navis DocumentCloud has been replaced by [DocumentCloud](https://wordpress.org/plugins/documentcloud/).**
 
-DocumentCloud's normal embed code looks like this:
+No further updates to Navis DocumentCloud will be released. Please migrate to [DocumentCloud](https://wordpress.org/plugins/documentcloud/) as soon as possible.
 
-    <div id="DV-viewer-265231-11-07-2011-letter-to-idaho-congressional" class="DV-container"></div>
-    <script src="http://s3.documentcloud.org/viewer/loader.js"></script>
-    <script>
-     DV.load('http://www.documentcloud.org/documents/265231-11-07-2011-letter-to-idaho-congressional.js', {
-        width: 600,
-        height: 450,
-        sidebar: false,
-        container: "#DV-viewer-265231-11-07-2011-letter-to-idaho-congressional"
-      });
-    </script>
-    
-That works great as long as you edit in HTML mode. Switch to the visual editor, and your container `div` disappears and your JavaScript is broken.
+For existing users, migrating should be seamless. Just uninstall Navis DocumentCloud and install DocumentCloud.
 
-To get around this, use this short code:
+- Shortcodes embedded with Navis DocumentCloud should work properly with DocumentCloud.
+- Options set in Settings > DocumentCloud should still be respected.
+- The embed button/wizard in the visual editor, which has been broken for a while, has been removed.
+- Modifications or extensions to Navis DocumentCloud are not guaranteed to work with DocumentCloud.
 
-    [documentcloud id="265231-11-07-2011-letter-to-idaho-congressional"]
-    
-Or use the URL from DocumentCloud:
-
-    [documentcloud url="http://www.documentcloud.org/documents/265231-11-07-2011-letter-to-idaho-congressional.html"]
-
+If you run into any problems, please contact support@documentcloud.org.
 
 
 == Installation ==
 
-1. Upload the navis-documentcloud directory to `wp-content/plugins/navis-documentcloud`
-2. Activate the plugin
-3. In your posts, add documents using the DocumentCloud button, or the `[documentcloud]` shortcode.
+**Navis DocumentCloud has been replaced by [DocumentCloud](https://wordpress.org/plugins/documentcloud/).**
+
+No further updates to Navis DocumentCloud will be released. Please install [DocumentCloud](https://wordpress.org/plugins/documentcloud/) instead.
+
+
+== Changelog ==
+
+= 0.1.1 =
+* Add notice and instructions for migrating to DocumentCloud
+* Remove unused TinyMCE components
+
+= 0.1 =
+* Initial release.
 

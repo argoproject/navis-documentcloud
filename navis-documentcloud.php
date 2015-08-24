@@ -1,8 +1,8 @@
 <?php
 /***
  * Plugin Name: Navis DocumentCloud
- * Description: Embed DocumentCloud documents that won't be eaten by the visual editor
- * Version: 0.1
+ * Description: This plugin has been replaced by DocumentCloud. See description.
+ * Version: 0.1.1
  * Author: Chris Amico
  * License: GPLv2
 ***/
@@ -26,6 +26,11 @@
 class Navis_DocumentCloud {
     
     function __construct() {
+
+        // If this plugin is active, we want to folks to migrate to the first-
+        // party version.
+        add_action('admin_init', array(&$this, 'check_navis_plugin_active'));
+
         // shortcode
         add_shortcode( 'documentcloud', array(&$this, 'embed_shortcode'));
         
@@ -34,6 +39,20 @@ class Navis_DocumentCloud {
         add_action( 'admin_menu', array(&$this, 'add_options_page'));
         
         add_action( 'admin_init', array(&$this, 'settings_init'));
+    }
+
+    function check_navis_plugin_active() {
+        if (is_plugin_active('navis-documentcloud/navis-documentcloud.php') && !is_plugin_active('documentcloud/documentcloud.php')) {
+            add_action( 'admin_notices', array(&$this, 'migrate_dc_plugin_notice'));
+        }
+    }
+
+    function migrate_dc_plugin_notice() {
+        ?>
+        <div class="update-nag">
+            <?php _e( '<b>Notice:</b> Navis DocumentCloud has been replaced by <a href="https://wordpress.org/plugins/documentcloud/">DocumentCloud</a> (<a href="https://blog.documentcloud.org/blog/2015/05/easier-publishing-with-wordpress-and-oembed/">see blog post</a>). Please uninstall Navis DocumentCloud and install <a href="https://wordpress.org/plugins/documentcloud/">DocumentCloud</a>.', 'documentcloud-plugin-migrate' ); ?>
+        </div>
+        <?php
     }
 
     function get_defaults() {
