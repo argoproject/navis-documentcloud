@@ -27,7 +27,7 @@ class Navis_DocumentCloud {
     
     function __construct() {
 
-        // If this plugin is active, we want to folks to migrate to the first-
+        // If this plugin is active, we want folks to migrate to the first-
         // party version.
         add_action('admin_init', array(&$this, 'check_navis_plugin_active'));
 
