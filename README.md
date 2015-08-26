@@ -80,7 +80,7 @@ If you find yourself absolutely needing to expire the cache, though, you have tw
 ## Changelog
 
 ### 0.3.3
-* Remove unused TinyMCE components
+* Remove unused TinyMCE components (resolves CVE-2015-2807 reported by dxw Security: https://security.dxw.com/advisories/publicly-exploitable-xss-in-wordpress-plugin-navis-documentcloud/)
 
 ### 0.3.2
 * Implement a few best practice security measures
