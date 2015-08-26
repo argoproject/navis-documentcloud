@@ -35,7 +35,8 @@ No further updates to Navis DocumentCloud will be released. Please install [Docu
 
 = 0.1.1 =
 * Add notice and instructions for migrating to DocumentCloud
-* Remove unused TinyMCE components (resolves CVE-2015-2807 reported by dxw Security: https://security.dxw.com/advisories/publicly-exploitable-xss-in-wordpress-plugin-navis-documentcloud/)
+* Remove unused TinyMCE components
+* Resolve CVE-2015-2807 reported by dxw Security at https://security.dxw.com/advisories/publicly-exploitable-xss-in-wordpress-plugin-navis-documentcloud/
 
 = 0.1 =
 * Initial release.
