@@ -232,7 +232,7 @@ class WP_DocumentCloud {
         $elements = $this->parse_dc_url($url);
         if ($elements['document_slug']) {
             $url = "{$elements['protocol']}://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/{$elements['document_slug']}" .
-                   ($elements['note_id'] ? "/annotations/{$elements['note_id']}" : '') . '.html';
+                   (isset($elements['note_id']) ? "/annotations/{$elements['note_id']}" : '') . '.html';
         }
         return $url;
     }

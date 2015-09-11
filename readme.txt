@@ -76,6 +76,7 @@ You can read more about publishing and embedding DocumentCloud resources on http
 == Changelog ==
 
 = 0.3.4 =
+* Check for existence of `note_id` without triggering PHP notice (#27)
 * Add DocumentCloud logo for plugin (#26)
 
 = 0.3.3 =
