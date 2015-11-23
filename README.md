@@ -79,7 +79,7 @@ If you find yourself absolutely needing to expire the cache, though, you have tw
 
 ## Changelog
 
-### 0.3.4
+### 0.3.4 (IN DEVELOPMENT)
 * Check for existence of `note_id` without triggering PHP notice (#27)
 * Add DocumentCloud logo for plugin (#26)
 
