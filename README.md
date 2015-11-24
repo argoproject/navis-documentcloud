@@ -66,6 +66,10 @@ Here's the full list of embed options you can pass via shortcode attributes; som
 
 You can read more about publishing and embedding DocumentCloud resources on https://www.documentcloud.org/help/publishing.
 
+## How the oEmbed endpoint is discovered
+
+To make a resource [discoverable](http://oembed.com/#section4) by oEmbed consumers, you can include a `<link>` tag that specifies the oEmbed endpoint URL. So in one version of reality, once you tell WordPress "this resource is oEmbeddable", WordPress would cURL the resource URL, look for the oEmbed link tag in its header, pluck out the oEmbed endpoint from the `<link>` tag's `href`, and then hit that endpoint for the embed code. In our actual reality, that's considered a waste of a cURL, so we have to actually describe the format of our oEmbed endpoint within WordPress itself.
+
 ## Caching
 
 Ideally, when WordPress hits our oEmbed service to fetch the embed code, it would obey the `cache_age` we return. Despite [conversation](https://core.trac.wordpress.org/ticket/14759) around this, it doesn't seem to.

@@ -66,6 +66,9 @@ class WP_DocumentCloud {
         <?php
     }
 
+    // Register ourselves as an oEmbed provider. WordPress does NOT cURL the 
+    // resource to inspect it for an oEmbed link tag; we have to tell it what 
+    // our oEmbed endpoint looks like.
     function register_dc_oembed_provider() {
     /*
         Hello developer. If you wish to test this plugin against your
