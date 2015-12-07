@@ -215,6 +215,9 @@ class WP_DocumentCloud {
         $patterns = array(
             // Document
             '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '\.html$}',
+            // Pages and page variants
+            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '.html#document/p(?P<page_number>[0-9]+)$}',
+            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . 'pages/(?P<page_number>[0-9]+)\.(html|js)$}',
             // Notes and note variants
             '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '/annotations/(?P<note_id>[0-9]+)\.(html|js)$}',
             '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '.html#document/p([0-9]+)/a(?P<note_id>[0-9]+)$}',
@@ -234,8 +237,14 @@ class WP_DocumentCloud {
     function clean_dc_url($url) {
         $elements = $this->parse_dc_url($url);
         if ($elements['document_slug']) {
-            $url = "{$elements['protocol']}://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/{$elements['document_slug']}" .
-                   (isset($elements['note_id']) ? "/annotations/{$elements['note_id']}" : '') . '.html';
+            $url = "{$elements['protocol']}://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/{$elements['document_slug']}";
+            if (isset($elements['page_number']) {
+                $url .= "/pages/{$elements['page_number']}";
+            }
+            else if (isset($elements['note_id']) {
+                $url .= "/annotations/{$elements['note_id']}";
+            }
+            $url .= '.html';
         }
         return $url;
     }
@@ -327,8 +336,11 @@ class WP_DocumentCloud {
                     if (isset($atts['url'])) {
                         $elements = $this->parse_dc_url($atts['url']);
                         $meta_key = $elements['document_slug'];
-                        if ($elements['note_id']) {
-                            $meta_key .= "-{$elements['note_id']}";
+                        if ($elements['page_number']) {
+                            $meta_key .= "-p{$elements['page_number']}";
+                        }
+                        else if ($elements['note_id']) {
+                            $meta_key .= "-a{$elements['note_id']}";
                         }
                     } else if (isset($atts['id'])) {
                         $meta_key = $atts['id'];
