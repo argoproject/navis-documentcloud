@@ -140,6 +140,12 @@ class WP_DocumentCloud {
                     // Don't pass these attributes to the provider
                     break;
                 default:
+                    // Without this check, `add_query_arg()` will treat values 
+                    // that are actually ID selectors, like `container=#foo`, 
+                    // as URL fragments and throw them at the end of the URL.
+                    if (strpos($value, '#') === 0) {
+                        $value = urlencode($value);
+                    }
                     $provider = add_query_arg( $key, $value, $provider );
                     break;
             }
