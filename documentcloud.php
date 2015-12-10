@@ -41,8 +41,10 @@ class WP_DocumentCloud {
         add_action('admin_init', array(&$this, 'check_dc_plugin_conflict'));
 
         add_action('init', array(&$this, 'register_dc_oembed_provider'));
-        add_shortcode('documentcloud', array(&$this, 'handle_dc_shortcode'));
-        add_filter('oembed_fetch_url', array(&$this, 'add_dc_arguments'), 10, 3);
+        // Only called when `[documentcloud]` shortcode is used
+        add_shortcode('documentcloud', array(&$this, 'process_dc_shortcode'));
+        // Called just before oEmbed endpoint is hit
+        add_filter('oembed_fetch_url', array(&$this, 'prepare_oembed_fetch'), 10, 3);
 
         // Setup admin settings
         add_action('admin_menu', array(&$this, 'add_options_page'));
@@ -130,7 +132,8 @@ class WP_DocumentCloud {
         );
     }
 
-    function add_dc_arguments($provider, $url, $args) {
+    function prepare_oembed_fetch($provider, $url, $args) {
+        // Clean and prepare arguments
         foreach ($args as $key => $value) {
             switch ($key) {
                 case 'format':
@@ -150,10 +153,16 @@ class WP_DocumentCloud {
                     break;
             }
         }
+
+        // Some resources (like notes) have multiple possible
+        // user-facing URLs. We recompose them into a single form.
+        $url = $this->clean_dc_url($url);
+        $provider = add_query_arg( 'url', urlencode($url), $provider );
+
     	return $provider;
     }
 
-    function handle_dc_shortcode($atts) {
+    function process_dc_shortcode($atts) {
         $default_sizes  = $this->get_default_sizes();
         $default_atts   = $this->get_default_atts();
 
@@ -172,10 +181,6 @@ class WP_DocumentCloud {
             else {
                 $url = $filtered_atts['url'] = "https://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/{$atts['id']}.html";
             }
-        } else {
-            // Some resources (like notes) have multiple possible
-            // user-facing URLs. We recompose them into a single form.
-            $url = $filtered_atts['url'] = $this->clean_dc_url($atts['url']);
         }
 
         // `height/width` beat `maxheight/maxwidth`; see full precedence list in `get_default_atts()`.
@@ -210,9 +215,10 @@ class WP_DocumentCloud {
             // This lets WordPress cache the result of the oEmbed call.
             // Thanks to http://bit.ly/1HykA0U for this pattern.
             global $wp_embed;
+            $url = $filtered_atts['url'] = $this->clean_dc_url($atts['url']);
             return $wp_embed->shortcode($filtered_atts, $url);
         } else {
-            return wp_oembed_get($url, $filtered_atts);
+            return wp_oembed_get($atts['url'], $filtered_atts);
         }
 
     }
@@ -237,6 +243,7 @@ class WP_DocumentCloud {
                 break;
             }
         }
+
         return $elements;
     }
 
