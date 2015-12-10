@@ -18,9 +18,9 @@ The DocumentCloud WordPress plugin lets you embed [DocumentCloud](https://www.do
 This plugin allows you to embed DocumentCloud resources using either the raw URL on its own line:
 
     Here's something you should really take a look at:
-    
+
     https://www.documentcloud.org/documents/282753-lefler-thesis.html
-    
+
     Isn't that interesting?
 
 Or a custom shortcode:
@@ -92,7 +92,7 @@ If you find yourself absolutely needing to expire the cache, though, you have tw
 * Support embedding raw contextual page/note URLs (#29)
 * Check for existence of things to stop triggering PHP notices (#27)
 * Add DocumentCloud logo for plugin (#26)
-* Fix ability to specificy a container in the shortcode
+* Fix ability to specify a container in the shortcode
 * Improve embeddable resource pattern recognition
 
 ### 0.3.3
