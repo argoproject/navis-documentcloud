@@ -34,7 +34,7 @@ class WP_DocumentCloud {
           DEFAULT_EMBED_FULL_WIDTH = 940,
           OEMBED_RESOURCE_DOMAIN   = 'www.documentcloud.org',
           OEMBED_PROVIDER          = 'https://www.documentcloud.org/api/oembed.{format}',
-          DOCUMENT_PATTERN         = '^(?P<protocol>https?)://www\.documentcloud\.org/documents/(?P<document_slug>[0-9]+-[a-z0-9-]+)';
+          DOCUMENT_PATTERN         = '^(?P<protocol>https?)://www\.documentcloud\.org\/documents\/(?P<document_slug>[0-9]+-[a-z0-9-]+)';
     
     function __construct() {
 
@@ -216,12 +216,12 @@ class WP_DocumentCloud {
             // Document
             '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '\.html$}',
             // Pages and page variants
-            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '.html#document/p(?P<page_number>[0-9]+)$}',
-            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . 'pages/(?P<page_number>[0-9]+)\.(html|js)$}',
+            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '.html#document\/p(?P<page_number>[0-9]+)$}',
+            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '\/pages\/(?P<page_number>[0-9]+)\.(html|js)$}',
             // Notes and note variants
-            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '/annotations/(?P<note_id>[0-9]+)\.(html|js)$}',
-            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '.html#document/p([0-9]+)/a(?P<note_id>[0-9]+)$}',
-            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '.html#annotation/a(?P<note_id>[0-9]+)$}',
+            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '\/annotations\/(?P<note_id>[0-9]+)\.(html|js)$}',
+            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '.html#document\/p([0-9]+)/a(?P<note_id>[0-9]+)$}',
+            '{' . WP_DocumentCloud::DOCUMENT_PATTERN . '.html#annotation\/a(?P<note_id>[0-9]+)$}',
         );
 
         $elements = array();
