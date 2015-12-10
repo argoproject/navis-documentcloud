@@ -79,10 +79,13 @@ You can read more about publishing and embedding DocumentCloud resources on http
 
 == Changelog ==
 
-= 0.3.4 (IN DEVELOPMENT) =
+= 0.4.0 =
 * Support embedding pages (#28)
-* Check for existence of `note_id` without triggering PHP notice (#27)
+* Support embedding raw contextual page/note URLs (#29)
+* Check for existence of things to stop triggering PHP notices (#27)
 * Add DocumentCloud logo for plugin (#26)
+* Fix ability to specificy a container in the shortcode
+* Improve embeddable resource pattern recognition
 
 = 0.3.3 =
 * Remove unused TinyMCE components
