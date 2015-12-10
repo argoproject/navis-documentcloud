@@ -236,7 +236,7 @@ class WP_DocumentCloud {
 
     function clean_dc_url($url) {
         $elements = $this->parse_dc_url($url);
-        if ($elements['document_slug']) {
+        if (isset($elements['document_slug'])) {
             $url = "{$elements['protocol']}://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/{$elements['document_slug']}";
             if (isset($elements['page_number'])) {
                 $url .= "/pages/{$elements['page_number']}";
@@ -335,19 +335,21 @@ class WP_DocumentCloud {
                     // get a doc id to keep array keys consistent
                     if (isset($atts['url'])) {
                         $elements = $this->parse_dc_url($atts['url']);
-                        $meta_key = $elements['document_slug'];
-                        if ($elements['page_number']) {
-                            $meta_key .= "-p{$elements['page_number']}";
-                        }
-                        else if ($elements['note_id']) {
-                            $meta_key .= "-a{$elements['note_id']}";
+                        if (isset($elements['document_slug'])) {
+                            $meta_key = $elements['document_slug'];
+                            if (isset($elements['page_number'])) {
+                                $meta_key .= "-p{$elements['page_number']}";
+                            }
+                            else if (isset($elements['note_id'])) {
+                                $meta_key .= "-a{$elements['note_id']}";
+                            }
                         }
                     } else if (isset($atts['id'])) {
                         $meta_key = $atts['id'];
                     }
                 
                     // if no id, don't bother storing because it's wrong
-                    if ($meta_key) {
+                    if (isset($meta_key)) {
                         $width = intval(isset($parsed_atts['width']) ? $parsed_atts['width'] : $atts['maxwidth']);
                         if ($atts['format'] == "wide" || $width > $default_sizes['width']) {
                             $wide_assets[$meta_key] = true;
