@@ -37,8 +37,8 @@ class WP_DocumentCloud {
 	 * Constructor.
 	 */
     function __construct() {
-		// Check for conflicts with other Documentcloud plugins.
-		// Not needed on WordPress VIP since no other Documentcloud plugins exist.
+		// Check for conflicts with other DocumentCloud plugins.
+		// Not needed on WordPress VIP since no other DocumentCloud plugins exist.
 		if ( ! defined( 'WPCOM_IS_VIP_ENV' ) || ! WPCOM_IS_VIP_ENV ) {
 			add_action( 'admin_init', array( $this, 'check_dc_plugin_conflict') );
 	        add_action( 'init', array( $this, 'register_dc_oembed_provider' ) );
@@ -57,7 +57,7 @@ class WP_DocumentCloud {
         add_action( 'admin_menu', array( $this, 'add_options_page' ) );
         add_action( 'admin_init', array( $this, 'settings_init' ) );
 
-        // Store Documentcloud metadata upon post save
+        // Store DocumentCloud metadata upon post save
         add_action( 'save_post', array( $this, 'save' ), 10, 2 );
     }
 
@@ -69,7 +69,7 @@ class WP_DocumentCloud {
 	}
 
 	/**
-	 * Check for conflicts with the Navis Documentcloud plugin.
+	 * Check for conflicts with the Navis DocumentCloud plugin.
 	 */
     function check_dc_plugin_conflict() {
         if ( is_plugin_active( 'navis-documentcloud/navis-documentcloud.php' ) ) {
@@ -78,7 +78,7 @@ class WP_DocumentCloud {
     }
 
 	/**
-	 * Create an admin notice when conflicts exist with Navis Documentcloud.
+	 * Create an admin notice when conflicts exist with Navis DocumentCloud.
 	 */
     function dc_conflict_admin_notice() {
         ?>
@@ -113,7 +113,7 @@ class WP_DocumentCloud {
     }
 
 	/**
-	 * Get the default sizes for Documentcloud.
+	 * Get the default sizes for DocumentCloud.
 	 *
 	 * @return array
 	 */
@@ -206,7 +206,7 @@ class WP_DocumentCloud {
     }
 
 	/**
-     * Create the Documentcloud embed output from the shortcode.
+     * Create the DocumentCloud embed output from the shortcode.
      *
      * @param array $atts
      * @return string
@@ -273,7 +273,7 @@ class WP_DocumentCloud {
     }
 
 	/**
-     * Parse the Documentcloud URL into its components.
+     * Parse the DocumentCloud URL into its components.
      *
      * @param string $url
      * @return array
@@ -303,7 +303,7 @@ class WP_DocumentCloud {
     }
 
 	/**
-     * Clean the Documentcloud URL.
+     * Clean the DocumentCloud URL.
      *
      * @param string $url
      * @return string
@@ -324,7 +324,7 @@ class WP_DocumentCloud {
     }
 
 	/**
-     * Add the Documentcloud options page.
+     * Add the DocumentCloud options page.
      */
     function add_options_page() {
         if ( current_user_can( 'manage_options' ) ) {
@@ -333,7 +333,7 @@ class WP_DocumentCloud {
     }
 
 	/**
-     * Render the Documentcloud options page.
+     * Render the DocumentCloud options page.
      */
     function render_options_page() {
     	?>
@@ -351,7 +351,7 @@ class WP_DocumentCloud {
     }
 
 	/**
-     * Initialize settings for the Documentcloud options page.
+     * Initialize settings for the DocumentCloud options page.
      */
     function settings_init() {
         if ( current_user_can( 'manage_options' ) ) {
@@ -416,7 +416,7 @@ class WP_DocumentCloud {
     }
 
 	/**
-     * Save Documentcloud postmeta required by the shortcode on post save.
+     * Save DocumentCloud postmeta required by the shortcode on post save.
      *
      * @param int $post_id
      * @param WP_Post $post
