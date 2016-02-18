@@ -355,12 +355,12 @@ class WP_DocumentCloud {
      */
     function settings_init() {
         if ( current_user_can( 'manage_options' ) ) {
-        	add_settings_section(
+			add_settings_section(
 				'documentcloud',
 				'',
 				'__return_null',
 				'documentcloud'
-            );
+			);
 
            add_settings_field(
             	'documentcloud_default_height',
