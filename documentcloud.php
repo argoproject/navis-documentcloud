@@ -362,7 +362,7 @@ class WP_DocumentCloud {
 				'documentcloud'
 			);
 
-		   add_settings_field(
+			add_settings_field(
 				'documentcloud_default_height',
 				__( 'Default embed height (px)', 'documentcloud' ),
 				array( $this, 'default_height_field' ),
