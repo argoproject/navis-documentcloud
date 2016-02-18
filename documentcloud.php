@@ -83,7 +83,7 @@ class WP_DocumentCloud {
     function dc_conflict_admin_notice() {
         ?>
         <div class="error">
-            <p><?php echo wp_kses( __( '<b>Warning!</b> You have two conflicting DocumentCloud plugins activated. Please deactivate Navis DocumentCloud, which has been replaced by <a target="_blank" href="https://wordpress.org/plugins/documentcloud/">DocumentCloud</a>.', 'documentcloud' ) ); ?></p>
+            <p><?php echo wp_kses_post( __( '<b>Warning!</b> You have two conflicting DocumentCloud plugins activated. Please deactivate Navis DocumentCloud, which has been replaced by <a target="_blank" href="https://wordpress.org/plugins/documentcloud/">DocumentCloud</a>.', 'documentcloud' ) ); ?></p>
         </div>
         <?php
     }
@@ -340,7 +340,7 @@ class WP_DocumentCloud {
         <h2><?php esc_html_e( 'DocumentCloud Options', 'documentcloud' ) ?></h2>
         <form action="options.php" method="post">
 
-            <p><?php echo wp_kses( __( 'Any widths set here will only take effect if you set <code>responsive="false"</code> on an embed.', 'documentcloud' ) ) ?></p>
+            <p><?php echo wp_kses_post( __( 'Any widths set here will only take effect if you set <code>responsive="false"</code> on an embed.', 'documentcloud' ) ) ?></p>
 
             <?php settings_fields( 'documentcloud' ); ?>
             <?php do_settings_sections( 'documentcloud' ); ?>
