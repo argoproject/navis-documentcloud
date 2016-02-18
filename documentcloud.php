@@ -423,7 +423,7 @@ class WP_DocumentCloud {
      */
     function save( $post_id, $post ) {
     	// Avoid autosave
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+    	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
 
