@@ -41,8 +41,10 @@ class WP_DocumentCloud {
 		// Not needed on WordPress VIP since no other DocumentCloud plugins exist.
 		if ( ! defined( 'WPCOM_IS_VIP_ENV' ) || ! WPCOM_IS_VIP_ENV ) {
 			add_action( 'admin_init', array( $this, 'check_dc_plugin_conflict') );
-			add_action( 'init', array( $this, 'register_dc_oembed_provider' ) );
 		}
+
+		// Register the oEmbed provider
+		add_action( 'init', array( $this, 'register_dc_oembed_provider' ) );
 
 		// Set the textdomain for the plugin so it is translation compatible
 		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
