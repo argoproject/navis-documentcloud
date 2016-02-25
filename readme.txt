@@ -79,6 +79,9 @@ You can read more about publishing and embedding DocumentCloud resources on http
 
 == Changelog ==
 
+= 0.4.2 =
+* Recognize Unicode document slugs (#37)
+
 = 0.4.1 =
 * Conform syntax to WordPress VIP plugin requirements (#30) (@bcampeau)
 * Fixed: Bare URLs now get default parameters (#35)
