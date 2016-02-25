@@ -79,6 +79,11 @@ You can read more about publishing and embedding DocumentCloud resources on http
 
 == Changelog ==
 
+= 0.4.1 =
+* Conform syntax to WordPress VIP plugin requirements (#30) (@bcampeau)
+* Fixed: Bare URLs now get default parameters (#35)
+* Fixed: Pages/notes on docs with uppercase slugs now embeddable (#36)
+
 = 0.4.0 =
 * Support embedding pages (#28)
 * Support embedding raw contextual page/note URLs (#29)
