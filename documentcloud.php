@@ -3,7 +3,7 @@
  * Plugin Name: DocumentCloud
  * Plugin URI: https://www.documentcloud.org/
  * Description: Embed DocumentCloud resources in WordPress content.
- * Version: 0.4.1
+ * Version: 0.4.2
  * Authors: Chris Amico, Justin Reese
  * License: GPLv2
 ***/
