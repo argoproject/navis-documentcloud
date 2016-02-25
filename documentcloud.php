@@ -178,8 +178,13 @@ class WP_DocumentCloud {
 	 * @return string
 	 */
 	function prepare_oembed_fetch( $provider, $url, $args ) {
+        // Merge actual args with default attributes so that defaults are always
+        // sent to oEmbed endpoint
+        $default_atts = $this->get_default_atts();
+        $atts         = array_merge( $default_atts, $args );
+
 		// Clean and prepare arguments
-		foreach ( $args as $key => $value ) {
+		foreach ( $atts as $key => $value ) {
 			switch ( $key ) {
 				case 'format':
 				case 'height':
