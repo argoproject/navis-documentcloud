@@ -124,12 +124,12 @@ class WP_DocumentCloud {
 
 		$height		= intval( get_option( 'documentcloud_default_height', $wp_embed_defaults['height'] ) );
 		$width		= intval( get_option( 'documentcloud_default_width', $wp_embed_defaults['width'] ) );
-		$full_width = intval( get_option( 'documentcloud_full_width', WP_DocumentCloud::DEFAULT_EMBED_FULL_WIDTH ) );
+		$full_width	= intval( get_option( 'documentcloud_full_width', WP_DocumentCloud::DEFAULT_EMBED_FULL_WIDTH ) );
 
 		return array (
-			'height'	 => $height,
-			'width'		 => $width,
-			'full_width' => $full_width,
+			'height'		=> $height,
+			'width'			=> $width,
+			'full_width'	=> $full_width,
 		);
 	}
 
@@ -145,7 +145,7 @@ class WP_DocumentCloud {
 			'url'				=> null,
 			'container'			=> null,
 			'notes'				=> null,
-			'responsive_offset' => null,
+			'responsive_offset'	=> null,
 			'default_page'		=> null,
 			'default_note'		=> null,
 			'zoom'				=> null,
