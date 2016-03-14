@@ -442,36 +442,38 @@ class WP_DocumentCloud {
 			$matches = array();
 
 			preg_match_all( '/'.get_shortcode_regex().'/', $post->post_content, $matches );
-			$tags = $matches[2];
-			$args = $matches[3];
-			foreach( $tags as $i => $tag ) {
-				if ( 'documentcloud' == $tag ) {
-					$parsed_atts = shortcode_parse_atts( $args[$i] );
-					$atts = shortcode_atts( $default_atts, $parsed_atts );
+			$tags = isset( $matches[2] ) ? $matches[2] : array();
+			$args = isset( $matches[3] ) ? $matches[3] : array();
+			if ( ! empty( $tags ) && is_array( $tags ) ) {
+				foreach( $tags as $i => $tag ) {
+					if ( 'documentcloud' == $tag ) {
+						$parsed_atts = shortcode_parse_atts( $args[$i] );
+						$atts = shortcode_atts( $default_atts, $parsed_atts );
 
-					// Get a doc id to keep array keys consistent
-					if ( isset( $atts['url'] ) ) {
-						$elements = $this->parse_dc_url( $atts['url'] );
-						if ( isset( $elements['document_slug'] ) ) {
-							$meta_key = $elements['document_slug'];
-							if ( isset( $elements['page_number'] ) ) {
-								$meta_key .= "-p{$elements['page_number']}";
+						// Get a doc id to keep array keys consistent
+						if ( isset( $atts['url'] ) ) {
+							$elements = $this->parse_dc_url( $atts['url'] );
+							if ( isset( $elements['document_slug'] ) ) {
+								$meta_key = $elements['document_slug'];
+								if ( isset( $elements['page_number'] ) ) {
+									$meta_key .= "-p{$elements['page_number']}";
+								}
+								else if ( isset( $elements['note_id'] ) ) {
+									$meta_key .= "-a{$elements['note_id']}";
+								}
 							}
-							else if ( isset( $elements['note_id'] ) ) {
-								$meta_key .= "-a{$elements['note_id']}";
-							}
+						} else if ( isset( $atts['id'] ) ) {
+							$meta_key = $atts['id'];
 						}
-					} else if ( isset( $atts['id'] ) ) {
-						$meta_key = $atts['id'];
-					}
 
-					// If no id, don't bother storing because it's wrong
-					if ( isset( $meta_key ) ) {
-						$width = intval( isset( $parsed_atts['width'] ) ? $parsed_atts['width'] : $atts['maxwidth'] );
-						if ( 'wide' == $atts['format'] || $width > $default_sizes['width'] ) {
-							$wide_assets[ $meta_key ] = true;
-						} else {
-							$wide_assets[ $meta_key ] = false;
+						// If no id, don't bother storing because it's wrong
+						if ( isset( $meta_key ) ) {
+							$width = intval( isset( $parsed_atts['width'] ) ? $parsed_atts['width'] : $atts['maxwidth'] );
+							if ( 'wide' == $atts['format'] || $width > $default_sizes['width'] ) {
+								$wide_assets[ $meta_key ] = true;
+							} else {
+								$wide_assets[ $meta_key ] = false;
+							}
 						}
 					}
 				}
