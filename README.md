@@ -62,9 +62,9 @@ Here's the full list of embed options you can pass via shortcode attributes; som
 - `note` (integer): ID of the note that the document should highlight by default.
 - `notes` (boolean): Show/hide notes:
 - `search` (boolean): Hide or show search form.
-- `sidebar` (boolean): Hide or show sidebar. Defaults `false`.
-- `pdf` (boolean): Hide or show link to download original PDF. Defaults `true`.
-- `text` (boolean): Hide or show text tab. Defaults `true`.
+- `sidebar` (boolean): Hide or show sidebar.
+- `pdf` (boolean): Hide or show link to download original PDF.
+- `text` (boolean): Hide or show text tab.
 - `zoom` (boolean): Hide or show zoom slider.
 - `format` (string): Indicate to the theme that this is a wide asset by setting this to `wide`. Defaults `normal`.
 
@@ -90,6 +90,7 @@ If you find yourself absolutely needing to expire the cache, though, you have tw
 ### 0.4.3
 * Separate the oEmbed config options (provided as params to the endpoint) from the embed config options (encoded as params on the `url`)
 * Rename `default_page` and `default_note` options back to `page` and `note`
+* Remove `sidebar`, `text`, and `pdf` default values
 
 ### 0.4.2
 * Recognize Unicode document slugs (#37)

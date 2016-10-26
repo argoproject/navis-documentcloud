@@ -151,6 +151,9 @@ class WP_DocumentCloud {
 			'zoom'              => null,
 			'search'            => null,
 			'responsive'        => null,
+			'sidebar'           => null,
+			'text'              => null,
+			'pdf'               => null,
 			// The following defaults match the existing plugin, except
 			// `height/width` are prefixed `max*` per the oEmbed spec.
 			// You can still use `height/width` for backwards
@@ -163,9 +166,6 @@ class WP_DocumentCloud {
 			'maxheight'         => $default_sizes['height'],
 			'maxwidth'          => $default_sizes['width'],
 			'format'            => 'normal',
-			'sidebar'           => 'false',
-			'text'              => 'true',
-			'pdf'               => 'true',
 		);
 	}
 
