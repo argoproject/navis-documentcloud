@@ -1,7 +1,7 @@
 === DocumentCloud ===
 Contributors: chrisamico, reefdog
 Tags: documentcloud, documents, journalism, reporting, research
-Requires at least: 3.2
+Requires at least: 3.5
 Tested up to: 4.6.1
 Stable tag: trunk
 License: GPLv2
