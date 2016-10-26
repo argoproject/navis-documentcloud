@@ -148,9 +148,9 @@ class WP_DocumentCloud {
 			'responsive_offset'	=> null,
 			'zoom'				=> null,
 			'search'			=> null,
-			'responsive'		=> 'true',
 			'page'              => null,
 			'note'              => null,
+			'responsive'        => null,
 			// The following defaults match the existing plugin, except
 			// `height/width` are prefixed `max*` per the oEmbed spec.
 			// You can still use `height/width` for backwards
@@ -183,30 +183,32 @@ class WP_DocumentCloud {
 		$default_atts = $this->get_default_atts();
 		$atts         = array_merge( $default_atts, $args );
 
-		// Clean and prepare arguments
-		foreach ( $atts as $key => $value ) {
-			switch ( $key ) {
-				case 'format':
-				case 'height':
-				case 'width':
-				case 'discover':
-					// Don't pass these attributes to the provider
-					break;
-				default:
-					// Without this check, `add_query_arg()` will treat values
-					// that are actually ID selectors, like `container=#foo`,
-					// as URL fragments and throw them at the end of the URL.
-					if ( 0 === strpos( $value, '#' ) ) {
-						$value = urlencode( $value );
-					}
-					$provider = add_query_arg( $key, $value, $provider );
-					break;
-			}
-		}
-
 		// Some resources (like notes) have multiple possible
 		// user-facing URLs. We recompose them into a single form.
 		$url = $this->clean_dc_url( $url );
+
+		// Send these to the oEmbed endpoint itself
+		$oembed_config_keys = array( 'maxheight', 'maxwidth' );
+
+		// Specifically *don't* include these on the embed config itself
+		$excluded_embed_config_keys = array( 'url', 'format', 'height', 'width', 'maxheight', 'maxwidth', 'discover' );
+
+		// Clean and prepare arguments
+		foreach ( $atts as $key => $value ) {
+			if ( in_array( $key, $oembed_config_keys ) ) {
+				$provider = add_query_arg( $key, $value, $provider );
+			}
+			if ( ! in_array( $key, $excluded_embed_config_keys ) ) {
+				// Without this check, `add_query_arg()` will treat values
+				// that are actually ID selectors, like `container=#foo`,
+				// as URL fragments and throw them at the end of the URL.
+				if ( 0 === strpos( $value, '#' ) ) {
+					$value = urlencode( $value );
+				}
+				$url = add_query_arg( $key, $value, $url );
+			}
+		}
+
 		$provider = add_query_arg( 'url', urlencode( $url ), $provider );
 
 		return $provider;
