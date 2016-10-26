@@ -142,14 +142,14 @@ class WP_DocumentCloud {
 		$default_sizes = $this->get_default_sizes();
 
 		return array(
-			'url'				=> null,
-			'container'			=> null,
-			'notes'				=> null,
-			'responsive_offset'	=> null,
-			'zoom'				=> null,
-			'search'			=> null,
+			'url'               => null,
+			'container'         => null,
+			'notes'             => null,
+			'responsive_offset' => null,
 			'page'              => null,
 			'note'              => null,
+			'zoom'              => null,
+			'search'            => null,
 			'responsive'        => null,
 			// The following defaults match the existing plugin, except
 			// `height/width` are prefixed `max*` per the oEmbed spec.
@@ -160,12 +160,12 @@ class WP_DocumentCloud {
 			//	2. `maxwidth` on shortcode
 			//	3. Settings > DocumentCloud > "Default embed width"
 			//	4. `wp_embed_defaults()['width']`
-			'maxheight'			=> $default_sizes['height'],
-			'maxwidth'			=> $default_sizes['width'],
-			'format'			=> 'normal',
-			'sidebar'			=> 'false',
-			'text'				=> 'true',
-			'pdf'				=> 'true',
+			'maxheight'         => $default_sizes['height'],
+			'maxwidth'          => $default_sizes['width'],
+			'format'            => 'normal',
+			'sidebar'           => 'false',
+			'text'              => 'true',
+			'pdf'               => 'true',
 		);
 	}
 
