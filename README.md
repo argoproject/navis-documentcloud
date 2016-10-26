@@ -58,8 +58,8 @@ Here's the full list of embed options you can pass via shortcode attributes; som
 - `width` (integer): Width (in pixels) of the embed. If used, will implicitly set `responsive="false"`.
 - `responsive` (boolean): Use responsive layout, which dynamically adjusts width to fill content area. Defaults `true`.
 - `responsive_offset` (integer): Distance (in pixels) to vertically offset the viewer for some responsive embeds.
-- `default_page` (integer): Page number to have the document scroll to by default.
-- `default_note` (integer): ID of the note that the document should highlight by default.
+- `page` (integer): Page number to have the document scroll to by default.
+- `note` (integer): ID of the note that the document should highlight by default.
 - `notes` (boolean): Show/hide notes:
 - `search` (boolean): Hide or show search form.
 - `sidebar` (boolean): Hide or show sidebar. Defaults `false`.
@@ -86,6 +86,9 @@ If you find yourself absolutely needing to expire the cache, though, you have tw
 2. Modify the shortcode attributes for the embed, since this is recognized as a new embed by WordPress.
 
 ## Changelog
+
+### 0.4.3
+* Rename `default_page` and `default_note` options back to `page` and `note`
 
 ### 0.4.2
 * Recognize Unicode document slugs (#37)
