@@ -80,8 +80,8 @@ You can read more about publishing and embedding DocumentCloud resources on http
 == Changelog ==
 
 = 0.4.3 =
-* Separate the oEmbed config options (provided as params to the endpoint) from the embed config options (encoded as params on the `url`)
-* Rename `default_page` and `default_note` options back to `page` and `note`
+* Separate the oEmbed config options (provided as params to the endpoint) from the embed config options (encoded as params on the `url`) (#48)
+* Rename `default_page` and `default_note` options back to `page` and `note` (#47)
 * Remove `sidebar`, `text`, and `pdf` default values
 
 = 0.4.2 =
