@@ -60,7 +60,7 @@ Here's the full list of embed options you can pass via shortcode attributes; som
 - `responsive_offset` (integer): Distance (in pixels) to vertically offset the viewer for some responsive embeds.
 - `page` (integer): Page number to have the document scroll to by default.
 - `note` (integer): ID of the note that the document should highlight by default.
-- `notes` (boolean): Show/hide notes
+- `notes` (boolean): Hide or show notes.
 - `search` (boolean): Hide or show search form.
 - `sidebar` (boolean): Hide or show sidebar.
 - `pdf` (boolean): Hide or show link to download original PDF.
