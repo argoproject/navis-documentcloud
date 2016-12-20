@@ -2,7 +2,7 @@
 Contributors: chrisamico, reefdog
 Tags: documentcloud, documents, journalism, reporting, research
 Requires at least: 3.5
-Tested up to: 4.6.1
+Tested up to: 4.7
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
