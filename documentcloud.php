@@ -58,9 +58,6 @@ class WP_DocumentCloud {
 		// Setup the settings page
 		add_action( 'admin_menu', array( $this, 'add_options_page' ) );
 		add_action( 'admin_init', array( $this, 'settings_init' ) );
-
-		// Store DocumentCloud metadata upon post save
-		add_action( 'save_post', array( $this, 'save' ), 10, 2 );
 	}
 
 	/**
