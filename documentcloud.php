@@ -58,9 +58,6 @@ class WP_DocumentCloud {
 		// Setup the settings page
 		add_action( 'admin_menu', array( $this, 'add_options_page' ) );
 		add_action( 'admin_init', array( $this, 'settings_init' ) );
-
-		// Store DocumentCloud metadata upon post save
-		add_action( 'save_post', array( $this, 'save' ), 10, 2 );
 	}
 
 	/**
@@ -420,65 +417,6 @@ class WP_DocumentCloud {
 	function full_width_field() {
 		$default_sizes = $this->get_default_sizes();
 		echo '<input type="text" value="' . esc_attr( $default_sizes['full_width'] ) . '" name="documentcloud_full_width" />';
-	}
-
-	/**
-	 * Save DocumentCloud postmeta required by the shortcode on post save.
-	 *
-	 * @param int $post_id
-	 * @param WP_Post $post
-	 */
-	function save( $post_id, $post ) {
-		// Avoid autosave
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-			return;
-		}
-
-		// Tell the post if we're carrying a wide load
-		if ( current_user_can( 'edit_posts' ) ) {
-			$default_sizes = $this->get_default_sizes();
-			$default_atts = $this->get_default_atts();
-			$wide_assets = get_post_meta( $post_id, 'wide_assets', true );
-			$matches = array();
-
-			preg_match_all( '/'.get_shortcode_regex().'/', $post->post_content, $matches );
-			$tags = isset( $matches[2] ) ? $matches[2] : array();
-			$args = isset( $matches[3] ) ? $matches[3] : array();
-			if ( ! empty( $tags ) && is_array( $tags ) ) {
-				foreach ( $tags as $i => $tag ) {
-					if ( 'documentcloud' === $tag ) {
-						$parsed_atts = shortcode_parse_atts( $args[ $i ] );
-						$atts = shortcode_atts( $default_atts, $parsed_atts );
-
-						// Get a doc id to keep array keys consistent
-						if ( isset( $atts['url'] ) ) {
-							$elements = $this->parse_dc_url( $atts['url'] );
-							if ( isset( $elements['document_slug'] ) ) {
-								$meta_key = $elements['document_slug'];
-								if ( isset( $elements['page_number'] ) ) {
-									$meta_key .= "-p{$elements['page_number']}";
-								} else if ( isset( $elements['note_id'] ) ) {
-									$meta_key .= "-a{$elements['note_id']}";
-								}
-							}
-						} else if ( isset( $atts['id'] ) ) {
-							$meta_key = $atts['id'];
-						}
-
-						// If no id, don't bother storing because it's wrong
-						if ( isset( $meta_key ) ) {
-							$width = intval( isset( $parsed_atts['width'] ) ? $parsed_atts['width'] : $atts['maxwidth'] );
-							if ( 'wide' === $atts['format'] || $width > $default_sizes['width'] ) {
-								$wide_assets[ $meta_key ] = true;
-							} else {
-								$wide_assets[ $meta_key ] = false;
-							}
-						}
-					}
-				}
-			}
-			update_post_meta( $post_id, 'wide_assets', $wide_assets );
-		}
 	}
 }
 
